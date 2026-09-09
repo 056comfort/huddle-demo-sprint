@@ -1,122 +1,187 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import './App.css'
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+
+import ChannelInfoPage from "./pages/ChannelInfoPage.jsx";
+import ChannelMembersPage from "./pages/ChannelMembersPage.jsx";
+import ChannelNotificationsPage from "./pages/ChannelNotificationsPage.jsx";
+import ChannelSettingsPage from "./pages/ChannelSettingsPage.jsx";
+
+import SettingsPage from "./pages/SettingsPage.jsx";
+import SupportPage from "./pages/SupportPage.jsx";
+import ProfilePage from "./pages/ProfilePage.jsx";
+
+import JoinChannelPage from "./pages/JoinChannelPage.jsx";
+import CreateChannelPage from "./pages/CreateChannelPage.jsx";
+import ChannelMessagingPage from "./pages/ChannelMessagingPage.jsx";
+
+import DirectMessagePage from "./pages/DirectMessagePage.jsx";
+import NewDirectMessagePage from "./pages/NewDirectMessagePage.jsx";
+
+import CallPage from "./pages/CallPage.jsx";
+import ChannelCallPage from "./pages/ChannelCallPage.jsx";
+
+import "./App.css";
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    <BrowserRouter>
+      <Routes>
+        {/* =========================
+            HOME
+        ========================== */}
+        <Route
+          path="/"
+          element={<Navigate to="/join-channel" replace />}
+        />
 
-      <div className="ticks"></div>
+        {/* =========================
+            WORKSPACE
+        ========================== */}
+        <Route
+          path="/join-channel"
+          element={<JoinChannelPage />}
+        />
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+        <Route
+          path="/create-channel"
+          element={<CreateChannelPage />}
+        />
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+        {/* =========================
+            CHANNEL MESSAGING
+        ========================== */}
+        <Route
+          path="/channel/:channelId"
+          element={<ChannelMessagingPage />}
+        />
+
+        {/* =========================
+            CHANNEL INFORMATION
+        ========================== */}
+        <Route
+          path="/channel/:channelId/info"
+          element={<ChannelInfoPage />}
+        />
+
+        {/* =========================
+            CHANNEL MEMBERS
+        ========================== */}
+        <Route
+          path="/channel/:channelId/members"
+          element={<ChannelMembersPage />}
+        />
+
+        {/* =========================
+            CHANNEL NOTIFICATIONS
+        ========================== */}
+        <Route
+          path="/channel/:channelId/notifications"
+          element={<ChannelNotificationsPage />}
+        />
+
+        {/* =========================
+            CHANNEL SETTINGS
+        ========================== */}
+        <Route
+          path="/channel/:channelId/settings"
+          element={<ChannelSettingsPage />}
+        />
+
+        {/* =========================
+            GENERAL SETTINGS
+        ========================== */}
+        <Route
+          path="/settings"
+          element={<SettingsPage />}
+        />
+
+        {/* =========================
+            SUPPORT
+        ========================== */}
+        <Route
+          path="/support"
+          element={<SupportPage />}
+        />
+
+        {/* =========================
+            PROFILE
+        ========================== */}
+        <Route
+          path="/profile"
+          element={<ProfilePage />}
+        />
+
+        {/* =========================
+            NEW DIRECT MESSAGE
+        ========================== */}
+        <Route
+          path="/dm/new"
+          element={<NewDirectMessagePage />}
+        />
+
+        {/* =========================
+            DIRECT MESSAGE
+        ========================== */}
+        <Route
+          path="/dm/:userId"
+          element={<DirectMessagePage />}
+        />
+
+        {/* =========================
+            DIRECT MESSAGE VIDEO CALL
+        ========================== */}
+        <Route
+          path="/call/video/:userId"
+          element={
+            <CallPage
+              callType="video"
+              targetType="dm"
+            />
+          }
+        />
+
+        {/* =========================
+            DIRECT MESSAGE AUDIO CALL
+        ========================== */}
+        <Route
+          path="/call/audio/:userId"
+          element={
+            <CallPage
+              callType="audio"
+              targetType="dm"
+            />
+          }
+        />
+
+        {/* =========================
+            CHANNEL VIDEO CALL
+        ========================== */}
+        <Route
+          path="/call/video/channel/:channelId"
+          element={
+            <ChannelCallPage callType="video" />
+          }
+        />
+
+        {/* =========================
+            CHANNEL AUDIO CALL
+        ========================== */}
+        <Route
+          path="/call/audio/channel/:channelId"
+          element={
+            <ChannelCallPage callType="audio" />
+          }
+        />
+
+        {/* =========================
+            FALLBACK
+        ========================== */}
+        <Route
+          path="*"
+          element={<Navigate to="/join-channel" replace />}
+        />
+      </Routes>
+    </BrowserRouter>
+  );
 }
 
-export default App
+export default App;
