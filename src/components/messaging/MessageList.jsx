@@ -18,23 +18,33 @@ const initialMessages = [
   {
     id: 3,
     user: "Sarah",
-    avatar: "M",
+    avatar: "S",
     message: "Doing well! I have been working on the new designs.",
     time: "10:36 AM",
   },
   {
     id: 4,
     user: "David",
-    avatar: "J",
+    avatar: "D",
     message: "Nice. We should review them together later.",
     time: "Just Now",
   },
 ];
 
-function MessageList() {
+function MessageList({ messages }) {
+  const displayedMessages = messages?.length
+    ? messages.map((item) => ({
+        id: item.id,
+        user: item.sender || item.user,
+        avatar: item.avatar,
+        message: item.message,
+        time: item.time,
+      }))
+    : initialMessages;
+
   return (
     <div className="message-list">
-      {initialMessages.map((message) => (
+      {displayedMessages.map((message) => (
         <MessageItem
           key={message.id}
           user={message.user}

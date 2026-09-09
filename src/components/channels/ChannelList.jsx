@@ -21,19 +21,28 @@ function HashIcon() {
   );
 }
 
-function HomeIcon() {
+function SearchIcon() {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path
-        d="m4 10 8-6 8 6v9a1 1 0 0 1-1 1h-5v-5H10v5H5a1 1 0 0 1-1-1v-9Z"
+      <circle
+        cx="10.8"
+        cy="10.8"
+        r="6"
         fill="none"
         stroke="currentColor"
-        strokeWidth="1.7"
-        strokeLinejoin="round"
+        strokeWidth="1.8"
+      />
+      <path
+        d="m15.3 15.3 4.2 4.2"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
       />
     </svg>
-  );
+  )
 }
+
 
 function SettingsIcon() {
   return (
@@ -123,9 +132,9 @@ function PersonAvatar({ letter, status = "online" }) {
 function ChannelList({ activeChannel }) {
   return (
     <div className="sidebar-navigation">
-      <Link to="/channel/general" className="sidebar-home-link">
-        <HomeIcon />
-        <span>Go to home</span>
+      <Link to="/join-channel" className="sidebar-home-link">
+      <SearchIcon />
+      <span>Join channel</span>
       </Link>
 
       <section className="sidebar-section">
@@ -158,43 +167,46 @@ function ChannelList({ activeChannel }) {
       </section>
 
       <section className="sidebar-section direct-message-section">
-        <div className="sidebar-section-heading">
-          <span>Direct messages</span>
+  <div className="sidebar-section-heading">
+    <span>Direct messages</span>
 
-          <button
-            type="button"
-            className="section-add-button"
-            aria-label="Add direct message"
-          >
-            <PlusIcon />
-          </button>
-        </div>
+    <Link
+      to="/dm/new"
+      className="section-add-button"
+      aria-label="Start a new direct message"
+    >
+      <PlusIcon />
+    </Link>
+  </div>
 
-        <div className="direct-message-list">
-          {directMessages.map((person) => (
-            <button
-              key={person.id}
-              type="button"
-              className="direct-message-item"
-            >
-              <PersonAvatar letter={person.avatar} status={person.status} />
+  <div className="direct-message-list">
+    {directMessages.map((person) => (
+      <Link
+        key={person.id}
+        to={`/dm/${person.id}`}
+        className="direct-message-item"
+      >
+        <PersonAvatar
+          letter={person.avatar}
+          status={person.status}
+        />
 
-              <span>{person.name}</span>
-            </button>
-          ))}
-        </div>
-      </section>
+        <span>{person.name}</span>
+      </Link>
+    ))}
+  </div>
+</section>
 
       <div className="sidebar-bottom-links">
-        <button type="button" className="sidebar-bottom-link">
-          <SettingsIcon />
-          <span>Settings</span>
-        </button>
+        <Link to="/settings" className="sidebar-bottom-link">
+        <SettingsIcon />
+        <span>Settings</span>
+        </Link>
 
-        <button type="button" className="sidebar-bottom-link">
-          <HelpIcon />
-          <span>Support</span>
-        </button>
+        <Link to="/support" className="sidebar-bottom-link">
+        <HelpIcon />
+        <span>Support</span>
+        </Link>
       </div>
     </div>
   );
