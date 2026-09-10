@@ -101,6 +101,7 @@ function PlusIcon() {
   );
 }
 
+
 function StatusDot({ status = "online" }) {
   return <span className={`person-status ${status}`} />;
 }

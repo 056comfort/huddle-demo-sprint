@@ -1,5 +1,12 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 
+// ===== YOUR IMPORTS (AUTH) =====
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import CreateWorkspace from "./pages/CreateWorkspace";
+import ForgotPassword from "./pages/ForgotPassword";
+
+// ===== PARTNER'S IMPORTS (CHANNELS) =====
 import ChannelInfoPage from "./pages/ChannelInfoPage.jsx";
 import ChannelMembersPage from "./pages/ChannelMembersPage.jsx";
 import ChannelNotificationsPage from "./pages/ChannelNotificationsPage.jsx";
@@ -26,16 +33,29 @@ function App() {
     <BrowserRouter>
       <Routes>
         {/* =========================
-            HOME
+            AUTHENTICATION
         ========================== */}
+
+        <Route path="/" element={<Login />} />
+
+        <Route path="/login" element={<Login />} />
+
+        <Route path="/register" element={<Register />} />
+
         <Route
-          path="/"
-          element={<Navigate to="/join-channel" replace />}
+          path="/create-workspace"
+          element={<CreateWorkspace />}
+        />
+
+        <Route
+          path="/forgot-password"
+          element={<ForgotPassword />}
         />
 
         {/* =========================
-            WORKSPACE
+            WORKSPACE / CHANNELS
         ========================== */}
+
         <Route
           path="/join-channel"
           element={<JoinChannelPage />}
@@ -49,6 +69,7 @@ function App() {
         {/* =========================
             CHANNEL MESSAGING
         ========================== */}
+
         <Route
           path="/channel/:channelId"
           element={<ChannelMessagingPage />}
@@ -57,6 +78,7 @@ function App() {
         {/* =========================
             CHANNEL INFORMATION
         ========================== */}
+
         <Route
           path="/channel/:channelId/info"
           element={<ChannelInfoPage />}
@@ -65,6 +87,7 @@ function App() {
         {/* =========================
             CHANNEL MEMBERS
         ========================== */}
+
         <Route
           path="/channel/:channelId/members"
           element={<ChannelMembersPage />}
@@ -73,6 +96,7 @@ function App() {
         {/* =========================
             CHANNEL NOTIFICATIONS
         ========================== */}
+
         <Route
           path="/channel/:channelId/notifications"
           element={<ChannelNotificationsPage />}
@@ -81,6 +105,7 @@ function App() {
         {/* =========================
             CHANNEL SETTINGS
         ========================== */}
+
         <Route
           path="/channel/:channelId/settings"
           element={<ChannelSettingsPage />}
@@ -89,6 +114,7 @@ function App() {
         {/* =========================
             GENERAL SETTINGS
         ========================== */}
+
         <Route
           path="/settings"
           element={<SettingsPage />}
@@ -97,6 +123,7 @@ function App() {
         {/* =========================
             SUPPORT
         ========================== */}
+
         <Route
           path="/support"
           element={<SupportPage />}
@@ -105,6 +132,7 @@ function App() {
         {/* =========================
             PROFILE
         ========================== */}
+
         <Route
           path="/profile"
           element={<ProfilePage />}
@@ -113,6 +141,7 @@ function App() {
         {/* =========================
             NEW DIRECT MESSAGE
         ========================== */}
+
         <Route
           path="/dm/new"
           element={<NewDirectMessagePage />}
@@ -121,6 +150,7 @@ function App() {
         {/* =========================
             DIRECT MESSAGE
         ========================== */}
+
         <Route
           path="/dm/:userId"
           element={<DirectMessagePage />}
@@ -129,6 +159,7 @@ function App() {
         {/* =========================
             DIRECT MESSAGE VIDEO CALL
         ========================== */}
+
         <Route
           path="/call/video/:userId"
           element={
@@ -142,6 +173,7 @@ function App() {
         {/* =========================
             DIRECT MESSAGE AUDIO CALL
         ========================== */}
+
         <Route
           path="/call/audio/:userId"
           element={
@@ -155,6 +187,7 @@ function App() {
         {/* =========================
             CHANNEL VIDEO CALL
         ========================== */}
+
         <Route
           path="/call/video/channel/:channelId"
           element={
@@ -165,6 +198,7 @@ function App() {
         {/* =========================
             CHANNEL AUDIO CALL
         ========================== */}
+
         <Route
           path="/call/audio/channel/:channelId"
           element={
@@ -175,9 +209,10 @@ function App() {
         {/* =========================
             FALLBACK
         ========================== */}
+
         <Route
           path="*"
-          element={<Navigate to="/join-channel" replace />}
+          element={<Navigate to="/" replace />}
         />
       </Routes>
     </BrowserRouter>
