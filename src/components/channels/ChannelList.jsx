@@ -101,21 +101,6 @@ function PlusIcon() {
   );
 }
 
-function ChevronIcon() {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path
-        d="m8 10 4 4 4-4"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.8"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
-
 function StatusDot({ status = "online" }) {
   return <span className={`person-status ${status}`} />;
 }
