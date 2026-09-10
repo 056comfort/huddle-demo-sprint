@@ -2,6 +2,7 @@
 import './Register.css'
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { endpoints } from '../api/apiConfig'
 
 function Register() {
   const [fullName, setFullName] = useState('')
@@ -10,37 +11,58 @@ function Register() {
   const [confirmPassword, setConfirmPassword] = useState('')
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
+  const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
     setSuccess('')
+    setLoading(true)
 
     if (!fullName || !email || !password || !confirmPassword) {
       setError('Please fill in all fields')
+      setLoading(false)
       return
     }
 
     if (password !== confirmPassword) {
       setError('Passwords do not match')
+      setLoading(false)
       return
     }
 
     if (password.length < 8) {
       setError('Password must be at least 8 characters')
+      setLoading(false)
       return
     }
 
-    setSuccess('Account created successfully! Redirecting to login...')
-    setFullName('')
-    setEmail('')
-    setPassword('')
-    setConfirmPassword('')
+    try {
+      const response = await fetch(endpoints.register, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ fullName, email, password }),
+      })
 
-    setTimeout(() => {
-      navigate('/login')
-    }, 2000)
+      const data = await response.json()
+
+      if (response.ok && data.success !== false) {
+        setSuccess('Account created! Redirecting to login...')
+        setFullName('')
+        setEmail('')
+        setPassword('')
+        setConfirmPassword('')
+        setTimeout(() => navigate('/login'), 1500)
+      } else {
+        setError(data.message || data.error || 'Registration failed')
+      }
+    } catch (err) {
+      setError('Cannot reach server. Please try again.')
+      console.error(err)
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -63,6 +85,7 @@ function Register() {
               placeholder="John Doe"
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
+              disabled={loading}
             />
           </div>
 
@@ -71,9 +94,10 @@ function Register() {
             <input
               id="email"
               type="email"
-              placeholder="alex_design@gmail.com"
+              placeholder="you@example.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              disabled={loading}
             />
           </div>
 
@@ -85,14 +109,27 @@ function Register() {
               placeholder="**********"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              disabled={loading}
             />
             <div className="password-hint">
               Must be at least 8 characters long.
             </div>
           </div>
 
-          <button type="submit" className="auth-button">
-            Create your account
+          <div className="form-group">
+            <label htmlFor="confirmPassword">Confirm Password</label>
+            <input
+              id="confirmPassword"
+              type="password"
+              placeholder="**********"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              disabled={loading}
+            />
+          </div>
+
+          <button type="submit" className="auth-button" disabled={loading}>
+            {loading ? 'Creating account...' : 'Create your account'}
           </button>
         </form>
 
