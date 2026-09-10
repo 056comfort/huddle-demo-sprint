@@ -19,6 +19,8 @@ import notificationRoutes from "./routes/notificationRoutes";
 import searchRoutes from "./routes/searchRoutes";
 import settingsRoutes from "./routes/settingsRoutes";
 
+import supportRoutes from "./routes/supportRoutes";
+
 import {
   getMe,
   updateMe,
@@ -44,6 +46,7 @@ app.get("/api/health", (_req, res) => {
 });
 
 // AUTHENTICATION
+
 // Frontend URLs
 app.use("/auth", authRoutes);
 
@@ -100,5 +103,8 @@ app.patch(
 
 // APP SETTINGS
 app.use("/api/settings", settingsRoutes);
+
+// SUPPORT
+app.use("/api/support", supportRoutes);
 
 export default app;

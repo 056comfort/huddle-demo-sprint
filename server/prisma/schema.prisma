@@ -7,6 +7,20 @@ datasource db {
   provider = "postgresql"
 }
 
+enum SupportTicketStatus {
+  OPEN
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+}
+
+enum SupportTicketPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
 model User {
   id        String   @id @default(uuid())
   name      String
@@ -19,9 +33,10 @@ model User {
   messages                    Message[]
   channels                    ChannelMember[]
   channelMessages             ChannelMessage[]
-  notifications               Notification[]
+  notifications              Notification[]
   channelNotificationSettings ChannelNotificationSetting[]
   workspaces                  Workspace[]
+  supportTickets              SupportTicket[]
 
   @@map("users")
 }
@@ -37,6 +52,24 @@ model Workspace {
 
   @@index([ownerId])
   @@map("workspaces")
+}
+
+model SupportTicket {
+  id          String                @id @default(uuid())
+  userId      String
+  subject     String
+  description String
+  status      SupportTicketStatus   @default(OPEN)
+  priority    SupportTicketPriority @default(MEDIUM)
+  createdAt   DateTime              @default(now())
+  updatedAt   DateTime              @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([status])
+  @@index([priority])
+  @@map("support_tickets")
 }
 
 model Conversation {
@@ -92,7 +125,7 @@ model Channel {
   name        String   @unique
   description String?
   createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  updatedAt  DateTime @updatedAt
 
   members              ChannelMember[]
   messages             ChannelMessage[]
@@ -121,8 +154,8 @@ model ChannelMessage {
   channelId String
   senderId  String
 
-  isEdited  Boolean  @default(false)
-  isDeleted Boolean  @default(false)
+  isEdited  Boolean @default(false)
+  isDeleted Boolean @default(false)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

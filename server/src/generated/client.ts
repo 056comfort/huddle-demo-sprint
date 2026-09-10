@@ -50,6 +50,11 @@ export type User = Prisma.UserModel
  */
 export type Workspace = Prisma.WorkspaceModel
 /**
+ * Model SupportTicket
+ * 
+ */
+export type SupportTicket = Prisma.SupportTicketModel
+/**
  * Model Conversation
  * 
  */

@@ -10,6 +10,7 @@
  */
 export type * from './models/User'
 export type * from './models/Workspace'
+export type * from './models/SupportTicket'
 export type * from './models/Conversation'
 export type * from './models/ConversationMember'
 export type * from './models/Message'
