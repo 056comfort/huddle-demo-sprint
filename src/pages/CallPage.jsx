@@ -133,10 +133,10 @@ function CallPage({ callType = "video", targetType = "dm" }) {
   const remoteVideoRef = useRef(null);
   const remoteAudioRef = useRef(null);
   const pendingCandidatesRef = useRef([]);
-  const callIdRef = useRef(
-    location.state?.callId ||
-      `${Date.now()}-${Math.random().toString(36).slice(2)}`
+  const [callId] = useState(
+    () => location.state?.callId || crypto.randomUUID()
   );
+  const callIdRef = useRef(callId);
 
   const incomingCall = Boolean(location.state?.incoming);
   const incomingCallerId = location.state?.callerId || userId;
@@ -149,7 +149,17 @@ function CallPage({ callType = "video", targetType = "dm" }) {
     incomingCall ? "Incoming call..." : "Calling..."
   );
   const [seconds, setSeconds] = useState(0);
-  const [error, setError] = useState("");
+  const [error, setError] = useState(() => {
+    if (!SOCKET_URL) {
+      return "VITE_SOCKET_URL is not configured. Add the deployed backend URL to your frontend environment.";
+    }
+
+    if (!getAuthToken()) {
+      return "No authentication token was found. Please sign in again.";
+    }
+
+    return "";
+  });
 
   const cleanupPeer = useCallback(() => {
     if (peerRef.current) {
@@ -309,18 +319,12 @@ function CallPage({ callType = "video", targetType = "dm" }) {
 
   useEffect(() => {
     if (!SOCKET_URL) {
-      setError(
-        "VITE_SOCKET_URL is not configured. Add the deployed backend URL to your frontend environment."
-      );
       return undefined;
     }
 
     const token = getAuthToken();
 
     if (!token) {
-      setError(
-        "No authentication token was found. Please sign in again."
-      );
       return undefined;
     }
 
@@ -485,14 +489,16 @@ function CallPage({ callType = "video", targetType = "dm" }) {
       }
     });
 
+    const activeCallId = callIdRef.current;
+
     return () => {
       socket.disconnect();
       socketRef.current = null;
+      callIdRef.current = activeCallId;
       cleanupPeer();
       cleanupMedia();
     };
   }, [
-    SOCKET_URL,
     addPendingCandidates,
     cleanupMedia,
     cleanupPeer,

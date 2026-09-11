@@ -151,9 +151,10 @@ function ChannelCallPage({ callType = "audio" }) {
   const peersRef = useRef(new Map());
   const pendingCandidatesRef = useRef(new Map());
   const remoteStreamsRef = useRef(new Map());
-  const callIdRef = useRef(
-    `${Date.now()}-${Math.random().toString(36).slice(2)}`
+  const [callId] = useState(
+    () => crypto.randomUUID()
   );
+  const callIdRef = useRef(callId);
 
   const [muted, setMuted] = useState(false);
   const [cameraOff, setCameraOff] = useState(false);
@@ -161,8 +162,18 @@ function ChannelCallPage({ callType = "audio" }) {
   const [seconds, setSeconds] = useState(0);
   const [participants, setParticipants] = useState([]);
   const [remoteStreams, setRemoteStreams] = useState([]);
-  const [connected, setConnected] = useState(false);
-  const [error, setError] = useState("");
+  const [localVideoReady, setLocalVideoReady] = useState(false);
+  const [error, setError] = useState(() => {
+    if (!SOCKET_URL) {
+      return "VITE_SOCKET_URL is not configured. Add the deployed backend URL to your frontend environment.";
+    }
+
+    if (!getAuthToken()) {
+      return "No authentication token was found. Please sign in again.";
+    }
+
+    return "";
+  });
 
   const addParticipant = useCallback((id) => {
     if (!id) {
@@ -295,10 +306,6 @@ function ChannelCallPage({ callType = "audio" }) {
       peer.onconnectionstatechange = () => {
         const state = peer.connectionState;
 
-        if (state === "connected") {
-          setConnected(true);
-        }
-
         if (
           state === "failed" ||
           state === "disconnected" ||
@@ -340,16 +347,6 @@ function ChannelCallPage({ callType = "audio" }) {
 
   const createOfferForUser = useCallback(
     async (targetUserId) => {
-      /*
-       * Only one side creates the initial offer.
-       * This prevents both peers from creating offers at the same time.
-       */
-      const myId = socketRef.current?.id || "";
-
-      if (!myId || myId >= targetUserId) {
-        return;
-      }
-
       try {
         const peer = await createPeer(targetUserId);
 
@@ -375,18 +372,12 @@ function ChannelCallPage({ callType = "audio" }) {
 
   useEffect(() => {
     if (!SOCKET_URL) {
-      setError(
-        "VITE_SOCKET_URL is not configured. Add the deployed backend URL to your frontend environment."
-      );
       return undefined;
     }
 
     const token = getAuthToken();
 
     if (!token) {
-      setError(
-        "No authentication token was found. Please sign in again."
-      );
       return undefined;
     }
 
@@ -408,6 +399,10 @@ function ChannelCallPage({ callType = "audio" }) {
 
       try {
         await getMedia();
+
+        if (isVideo) {
+          setLocalVideoReady(true);
+        }
 
         socket.emit("channel-call:join", {
           channelId,
@@ -593,37 +588,46 @@ function ChannelCallPage({ callType = "audio" }) {
       }
     );
 
+    const activeCallId = callIdRef.current;
+    const activePeers = peersRef.current;
+    const activePendingCandidates = pendingCandidatesRef.current;
+    const activeRemoteStreams = remoteStreamsRef.current;
+    const activeLocalStream = localStreamRef.current;
+
     return () => {
       mounted = false;
 
       socket.emit("channel-call:leave", {
         channelId,
-        callId: callIdRef.current,
+        callId: activeCallId,
         type: isVideo ? "video" : "voice",
       });
 
       socket.disconnect();
 
-      peersRef.current.forEach((peer) => {
+      activePeers.forEach((peer) => {
         peer.close();
       });
 
-      peersRef.current.clear();
-      pendingCandidatesRef.current.clear();
-      remoteStreamsRef.current.clear();
+      activePeers.clear();
+      activePendingCandidates.clear();
+      activeRemoteStreams.clear();
 
-      if (localStreamRef.current) {
-        localStreamRef.current.getTracks().forEach((track) => {
+      if (activeLocalStream) {
+        activeLocalStream.getTracks().forEach((track) => {
           track.stop();
         });
 
         localStreamRef.current = null;
       }
 
+      if (isVideo) {
+        setLocalVideoReady(false);
+      }
+
       socketRef.current = null;
     };
   }, [
-    SOCKET_URL,
     addParticipant,
     addPendingCandidates,
     channelId,
@@ -762,7 +766,7 @@ function ChannelCallPage({ callType = "audio" }) {
         ))}
 
         <article className="channel-participant current-user">
-          {isVideo && !cameraOff && localStreamRef.current ? (
+          {isVideo && !cameraOff && localVideoReady ? (
             <video
               autoPlay
               muted
