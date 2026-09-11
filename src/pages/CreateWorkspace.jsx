@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { endpoints } from '../api/apiConfig'
 
 function CreateWorkspace() {
   const [workspaceName, setWorkspaceName] = useState('')
@@ -33,7 +32,7 @@ function CreateWorkspace() {
     setLoading(true)
 
     try {
-      const response = await fetch(endpoints.createWorkspace, {
+      const response = await fetch('/api/workspace', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
