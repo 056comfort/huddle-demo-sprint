@@ -33,6 +33,7 @@ function Register() {
     }
 
     setSuccess('Account created successfully! Redirecting to login...')
+
     setFullName('')
     setEmail('')
     setPassword('')
@@ -89,6 +90,17 @@ function Register() {
             <div className="password-hint">
               Must be at least 8 characters long.
             </div>
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="confirmPassword">Confirm Password</label>
+            <input
+              id="confirmPassword"
+              type="password"
+              placeholder="**********"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+            />
           </div>
 
           <button type="submit" className="auth-button">

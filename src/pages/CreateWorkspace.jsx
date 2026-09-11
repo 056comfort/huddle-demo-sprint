@@ -24,7 +24,7 @@ function CreateWorkspace() {
     setDescription('')
 
     setTimeout(() => {
-      navigate('/channels')
+      navigate('/create-channel')
     }, 2000)
   }
 
@@ -44,7 +44,7 @@ function CreateWorkspace() {
       borderRadius: '16px',
       boxShadow: '0 8px 30px rgba(0, 0, 0, 0.08)',
       width: '420px',
-      height: '550px',          // ← FIXED HEIGHT (not min-height)
+      height: '550px',
       display: 'flex',
       flexDirection: 'column',
       justifyContent: 'center'
@@ -163,7 +163,9 @@ function CreateWorkspace() {
       <div style={styles.card}>
         <div style={styles.header}>
           <h2 style={styles.headerH2}>Create Workspace</h2>
-          <p style={styles.headerP}>Set up your team's workspace to start collaborating.</p>
+          <p style={styles.headerP}>
+            Set up your team's workspace to start collaborating.
+          </p>
         </div>
 
         {error && <div style={styles.error}>{error}</div>}
@@ -171,7 +173,13 @@ function CreateWorkspace() {
 
         <form onSubmit={handleSubmit} style={styles.form}>
           <div style={styles.formGroup}>
-            <label style={styles.label} htmlFor="workspaceName">Workspace Name</label>
+            <label
+              style={styles.label}
+              htmlFor="workspaceName"
+            >
+              Workspace Name
+            </label>
+
             <input
               id="workspaceName"
               type="text"
@@ -185,7 +193,13 @@ function CreateWorkspace() {
           </div>
 
           <div style={styles.formGroup}>
-            <label style={styles.label} htmlFor="description">Description (optional)</label>
+            <label
+              style={styles.label}
+              htmlFor="description"
+            >
+              Description (optional)
+            </label>
+
             <input
               id="description"
               type="text"
@@ -198,8 +212,8 @@ function CreateWorkspace() {
             />
           </div>
 
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             style={styles.button}
             onMouseEnter={handleButtonHover}
             onMouseLeave={handleButtonLeave}
@@ -209,7 +223,12 @@ function CreateWorkspace() {
         </form>
 
         <p style={styles.footer}>
-          <Link to="/login" style={styles.footerLink}>Back to Login</Link>
+          <Link
+            to="/login"
+            style={styles.footerLink}
+          >
+            Back to Login
+          </Link>
         </p>
       </div>
     </div>
