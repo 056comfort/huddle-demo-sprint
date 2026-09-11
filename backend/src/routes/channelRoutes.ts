@@ -4,6 +4,7 @@ import {
   createChannel,
   getChannels,
   getChannelById,
+  getChannelByName,
   updateChannel,
   deleteChannel,
 } from "../controllers/channelController";
@@ -17,6 +18,9 @@ router.use(protect);
 router.post("/", createChannel);
 
 router.get("/", getChannels);
+
+// Must be before /:channelId to avoid "by-name" being treated as an ID
+router.get("/by-name/:name", getChannelByName);
 
 router.get("/:channelId", getChannelById);
 

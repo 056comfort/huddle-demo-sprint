@@ -5567,3 +5567,235 @@ html[data-huddle-theme="system"] textarea::placeholder {
 /* =========================================================
    END GLOBAL THEME LAYER
    ========================================================= */
+
+/* =========================================================
+   SIDEBAR SEARCH BAR
+   ========================================================= */
+
+.sidebar-search-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 10px 12px 6px;
+  padding: 7px 10px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 8px;
+}
+
+.sidebar-search-icon {
+  display: flex;
+  align-items: center;
+  opacity: 0.5;
+  flex-shrink: 0;
+  color: #fff;
+}
+
+.sidebar-search-input {
+  flex: 1;
+  background: none;
+  border: none;
+  outline: none;
+  color: #fff;
+  font-size: 12px;
+  min-width: 0;
+}
+
+.sidebar-search-input::placeholder {
+  color: rgba(255,255,255,0.45);
+}
+
+.sidebar-search-clear {
+  background: none;
+  border: none;
+  color: rgba(255,255,255,0.5);
+  font-size: 16px;
+  line-height: 1;
+  padding: 0 2px;
+  cursor: pointer;
+}
+
+.sidebar-browse-link {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 8px;
+  margin: 2px 4px 6px;
+  border-radius: 6px;
+  font-size: 12px;
+  color: rgba(255,255,255,0.6);
+  text-decoration: none;
+  transition: background 0.15s, color 0.15s;
+}
+
+.sidebar-browse-link:hover {
+  background: rgba(255,255,255,0.08);
+  color: #fff;
+}
+
+.sidebar-browse-link svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+.sidebar-loading,
+.sidebar-empty {
+  display: block;
+  padding: 6px 8px;
+  font-size: 11px;
+  color: rgba(255,255,255,0.4);
+  font-style: italic;
+}
+
+/* =========================================================
+   CHANNEL BROWSER (JoinChannel page)
+   ========================================================= */
+
+.channel-search-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 20px 0 12px;
+  padding: 10px 12px;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 10px;
+  background: #f9fafb;
+}
+
+.channel-search-bar input {
+  flex: 1;
+  background: none;
+  border: none;
+  outline: none;
+  font-size: 14px;
+  color: #111827;
+}
+
+.channel-search-bar input::placeholder {
+  color: #9ca3af;
+}
+
+.channel-browse-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
+  max-height: 420px;
+  overflow-y: auto;
+}
+
+.channel-browse-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  border: 1px solid #f3f4f6;
+  border-radius: 10px;
+  background: #fafafa;
+  gap: 12px;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.channel-browse-item:hover {
+  border-color: #e0d9ff;
+  background: #f9f7ff;
+}
+
+.channel-browse-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.channel-browse-name {
+  font-weight: 600;
+  font-size: 14px;
+  color: #111827;
+}
+
+.channel-browse-desc {
+  font-size: 12px;
+  color: #6b7280;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 280px;
+}
+
+.channel-browse-meta {
+  font-size: 11px;
+  color: #9ca3af;
+}
+
+.channel-browse-actions {
+  flex-shrink: 0;
+}
+
+/* =========================================================
+   CHAT MESSAGE ITEM (ChannelMessagingPage)
+   ========================================================= */
+
+.message-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 8px 16px;
+}
+
+.message-item:hover {
+  background: rgba(0,0,0,0.02);
+}
+
+.message-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #6947ff;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.message-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.message-meta {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 3px;
+}
+
+.message-meta strong {
+  font-size: 13px;
+  color: #111827;
+}
+
+.message-meta time {
+  font-size: 11px;
+  color: #9ca3af;
+}
+
+.message-bubble {
+  font-size: 14px;
+  color: #374151;
+  line-height: 1.5;
+  word-wrap: break-word;
+}
+
+.message-list-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  color: #9ca3af;
+  font-size: 14px;
+}

@@ -376,3 +376,42 @@ export const deleteChannel = async (
     });
   }
 };
+
+// GET CHANNEL BY NAME (for legacy name-based URL resolution)
+export const getChannelByName = async (
+  req: AuthRequest,
+  res: Response
+) => {
+  try {
+    const currentUserId = req.user?.userId;
+    const { name } = req.params;
+
+    if (!currentUserId) {
+      return res.status(401).json({ message: "Authentication required" });
+    }
+
+    const channel = await prisma.channel.findUnique({
+      where: { name: decodeURIComponent(name) },
+      include: {
+        members: {
+          select: {
+            id: true,
+            userId: true,
+            joinedAt: true,
+            user: { select: { id: true, name: true, email: true } },
+          },
+        },
+        _count: { select: { members: true, messages: true } },
+      },
+    });
+
+    if (!channel) {
+      return res.status(404).json({ message: "Channel not found" });
+    }
+
+    return res.status(200).json({ channel });
+  } catch (error) {
+    console.error("Get channel by name error:", error);
+    return res.status(500).json({ message: "Failed to get channel" });
+  }
+};

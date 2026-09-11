@@ -1,13 +1,16 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { endpoints, apiFetch } from "../../api/apiConfig";
 
 function CreateChannel() {
   const [channelName, setChannelName] = useState("");
+  const [description, setDescription] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
     const cleanName = channelName.trim();
@@ -18,21 +21,29 @@ function CreateChannel() {
     }
 
     setError("");
+    setLoading(true);
 
-    // Persist channel to localStorage so it shows in the sidebar
     try {
-      const DEFAULT_CHANNELS = ["general", "design", "development"];
-      const saved = localStorage.getItem("huddle_channels");
-      const existing = saved ? JSON.parse(saved) : DEFAULT_CHANNELS;
-      const lowerName = cleanName.toLowerCase();
-      if (!existing.includes(lowerName)) {
-        const updated = [...existing, lowerName];
-        localStorage.setItem("huddle_channels", JSON.stringify(updated));
-        window.dispatchEvent(new Event("huddle_channels_updated"));
-      }
-    } catch { /* ignore localStorage errors */ }
+      const res = await apiFetch(endpoints.channels, {
+        method: "POST",
+        body: JSON.stringify({ name: cleanName, description: description.trim() || undefined }),
+      });
 
-    navigate(`/channel/${encodeURIComponent(cleanName)}`);
+      const data = await res.json();
+
+      if (res.ok) {
+        // Navigate using the channel's real ID so messages persist
+        navigate(`/channel/${data.channel.id}`);
+      } else if (res.status === 409) {
+        setError("A channel with that name already exists. Try joining it instead.");
+      } else {
+        setError(data.message || "Failed to create channel. Please try again.");
+      }
+    } catch {
+      setError("Network error. Please check your connection and try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -50,7 +61,6 @@ function CreateChannel() {
 
       <form onSubmit={handleSubmit} className="channel-form">
         <label htmlFor="create-channel-name">Channel name</label>
-
         <input
           id="create-channel-name"
           type="text"
@@ -59,19 +69,33 @@ function CreateChannel() {
             setChannelName(event.target.value);
             setError("");
           }}
-          placeholder="e.g. design"
+          placeholder="e.g. capstone-project"
           autoComplete="off"
+          disabled={loading}
+        />
+
+        <label htmlFor="create-channel-desc" style={{ marginTop: "12px" }}>
+          Description <span style={{ fontWeight: 400, color: "#9ca3af" }}>(optional)</span>
+        </label>
+        <input
+          id="create-channel-desc"
+          type="text"
+          value={description}
+          onChange={(event) => setDescription(event.target.value)}
+          placeholder="What is this channel about?"
+          autoComplete="off"
+          disabled={loading}
         />
 
         {error && <p className="form-error">{error}</p>}
 
-        <button type="submit" className="primary-button">
-          Create channel
+        <button type="submit" className="primary-button" disabled={loading}>
+          {loading ? "Creating…" : "Create channel"}
         </button>
       </form>
 
       <p className="secondary-action">
-        Already have a channel? <Link to="/join-channel">Join a channel</Link>
+        Already have a channel? <Link to="/join-channel">Browse &amp; join</Link>
       </p>
     </section>
   );
