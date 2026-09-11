@@ -1,5 +1,3 @@
-// src/pages/CreateWorkspace.jsx
-
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { endpoints } from '../api/apiConfig'
@@ -39,20 +37,33 @@ function CreateWorkspace() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          name: workspaceName,
-          description: description,
+          name: workspaceName.trim(),
+          description: description.trim(),
         }),
       })
 
       const data = await response.json()
 
+      if (!response.ok) {
+        throw new Error(
+          data.message || data.error || 'Failed to create workspace'
+        )
+      }
 
+      setSuccess('Workspace created successfully!')
+
+      setTimeout(() => {
+        navigate('/create-channel')
+      }, 1000)
+    } catch (err) {
+      setError(err.message || 'Something went wrong')
+    } finally {
+      setLoading(false)
+    }
   }
-
-  // ===== STYLES =====
 
   const styles = {
     page: {
@@ -78,13 +89,6 @@ function CreateWorkspace() {
 
     header: {
       marginBottom: '32px',
-    },
-
-    headerH2: {
-      fontSize: '28px',
-      fontWeight: '700',
-      color: '#1a1a2e',
-      margin: '0 0 8px 0',
     },
 
     headerP: {
@@ -172,8 +176,6 @@ function CreateWorkspace() {
     },
   }
 
-  // ===== INPUT FOCUS EFFECT =====
-
   const handleFocus = (e) => {
     e.target.style.borderColor = '#6C63FF'
     e.target.style.outline = 'none'
@@ -187,8 +189,6 @@ function CreateWorkspace() {
     e.target.style.boxShadow = 'none'
     e.target.style.background = '#f9fafb'
   }
-
-  // ===== BUTTON HOVER EFFECT =====
 
   const handleButtonHover = (e) => {
     if (!loading) {
@@ -208,9 +208,7 @@ function CreateWorkspace() {
   return (
     <div style={styles.page}>
       <div style={styles.card}>
-
         <div style={styles.header}>
-
           <p style={styles.headerP}>
             Set up your team's workspace to start collaborating.
           </p>
@@ -229,7 +227,6 @@ function CreateWorkspace() {
         )}
 
         <form onSubmit={handleSubmit} style={styles.form}>
-
           <div style={styles.formGroup}>
             <label
               style={styles.label}
@@ -243,9 +240,7 @@ function CreateWorkspace() {
               type="text"
               placeholder="Enter workspace name"
               value={workspaceName}
-              onChange={(e) =>
-                setWorkspaceName(e.target.value)
-              }
+              onChange={(e) => setWorkspaceName(e.target.value)}
               style={styles.input}
               onFocus={handleFocus}
               onBlur={handleBlur}
@@ -266,9 +261,7 @@ function CreateWorkspace() {
               type="text"
               placeholder="What's this workspace for?"
               value={description}
-              onChange={(e) =>
-                setDescription(e.target.value)
-              }
+              onChange={(e) => setDescription(e.target.value)}
               style={styles.input}
               onFocus={handleFocus}
               onBlur={handleBlur}
@@ -285,7 +278,6 @@ function CreateWorkspace() {
           >
             {loading ? 'Creating...' : 'Create Workspace'}
           </button>
-
         </form>
 
         <p style={styles.footer}>
@@ -296,11 +288,9 @@ function CreateWorkspace() {
             Back to Login
           </Link>
         </p>
-
       </div>
     </div>
   )
 }
 
 export default CreateWorkspace
-
