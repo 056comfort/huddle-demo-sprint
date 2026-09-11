@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 
@@ -38,16 +38,11 @@ function ProfilePage() {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
 
-  const [name, setName] = useState(user?.name || "User");
-  const [email, setEmail] = useState(user?.email || "name@gmail.com");
+  const [name, setName] = useState(() => user?.name || "User");
+  const [email, setEmail] = useState(() => user?.email || "name@gmail.com");
   const [about, setAbout] = useState(
     "Available for collaboration"
   );
-
-  useEffect(() => {
-    if (user?.name) setName(user.name);
-    if (user?.email) setEmail(user.email);
-  }, [user]);
 
   const avatarInitial = (name || "U").charAt(0).toUpperCase();
 

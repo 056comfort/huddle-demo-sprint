@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth.js";
 
@@ -234,6 +234,7 @@ function ChannelMessagingPage() {
     },
   ];
 
+  const [currentChannel, setCurrentChannel] = useState(channelName);
   const [messages, setMessages] = useState(() => {
     try {
       const saved = localStorage.getItem(`huddle_msgs_${channelName}`);
@@ -243,18 +244,15 @@ function ChannelMessagingPage() {
     }
   });
 
-  useEffect(() => {
+  if (currentChannel !== channelName) {
+    setCurrentChannel(channelName);
     try {
       const saved = localStorage.getItem(`huddle_msgs_${channelName}`);
-      if (saved) {
-        setMessages(JSON.parse(saved));
-      } else {
-        setMessages(defaultMessages);
-      }
+      setMessages(saved ? JSON.parse(saved) : defaultMessages);
     } catch {
       setMessages(defaultMessages);
     }
-  }, [channelName]);
+  }
 
   function handleSendMessage(messageText) {
     if (!messageText?.trim()) {
