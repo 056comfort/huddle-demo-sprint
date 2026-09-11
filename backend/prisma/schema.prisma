@@ -1,5 +1,5 @@
 generator client {
-  provider = "prisma-client"
+  provider = "prisma-client-js"
   output   = "../src/generated"
 }
 
@@ -33,7 +33,7 @@ model User {
   messages                    Message[]
   channels                    ChannelMember[]
   channelMessages             ChannelMessage[]
-  notifications              Notification[]
+  notifications               Notification[]
   channelNotificationSettings ChannelNotificationSetting[]
   workspaces                  Workspace[]
   supportTickets              SupportTicket[]
@@ -125,7 +125,7 @@ model Channel {
   name        String   @unique
   description String?
   createdAt   DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  updatedAt   DateTime @updatedAt
 
   members              ChannelMember[]
   messages             ChannelMessage[]

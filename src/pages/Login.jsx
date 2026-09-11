@@ -2,23 +2,49 @@
 import './Login.css'
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { endpoints } from '../api/apiConfig'
 
 function Login() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
+    setLoading(true)
 
     if (!email || !password) {
       setError('Please fill in all fields')
+      setLoading(false)
       return
     }
 
-    navigate('/create-workspace')
+    try {
+      const response = await fetch(endpoints.login, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      })
+
+      const data = await response.json()
+
+      if (response.ok && data.success !== false) {
+        if (data.token) {
+          localStorage.setItem('token', data.token)
+        }
+        navigate('/create-workspace')
+      } else {
+        setError(data.message || data.error || 'Invalid credentials')
+      }
+    } catch (err) {
+      setError('Cannot reach server. Please try again.')
+      console.error(err)
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -37,9 +63,10 @@ function Login() {
             <input
               id="email"
               type="email"
-              placeholder="alex_design@gmail.com"
+              placeholder="you@example.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              disabled={loading}
             />
           </div>
 
@@ -51,6 +78,7 @@ function Login() {
               placeholder="********"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              disabled={loading}
             />
             <div className="form-extra">
               <Link to="/forgot-password" className="forgot-link">
@@ -59,8 +87,8 @@ function Login() {
             </div>
           </div>
 
-          <button type="submit" className="auth-button">
-            Sign in
+          <button type="submit" className="auth-button" disabled={loading}>
+            {loading ? 'Signing in...' : 'Sign in'}
           </button>
         </form>
 

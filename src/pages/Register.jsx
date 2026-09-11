@@ -2,6 +2,7 @@
 import './Register.css'
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { endpoints } from '../api/apiConfig'
 
 function Register() {
   const [fullName, setFullName] = useState('')
@@ -10,38 +11,34 @@ function Register() {
   const [confirmPassword, setConfirmPassword] = useState('')
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
+  const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
     setSuccess('')
+    setLoading(true)
 
     if (!fullName || !email || !password || !confirmPassword) {
       setError('Please fill in all fields')
+      setLoading(false)
       return
     }
 
     if (password !== confirmPassword) {
       setError('Passwords do not match')
+      setLoading(false)
       return
     }
 
     if (password.length < 8) {
       setError('Password must be at least 8 characters')
+      setLoading(false)
       return
     }
 
-    setSuccess('Account created successfully! Redirecting to login...')
 
-    setFullName('')
-    setEmail('')
-    setPassword('')
-    setConfirmPassword('')
-
-    setTimeout(() => {
-      navigate('/login')
-    }, 2000)
   }
 
   return (
@@ -64,6 +61,7 @@ function Register() {
               placeholder="John Doe"
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
+              disabled={loading}
             />
           </div>
 
@@ -72,9 +70,10 @@ function Register() {
             <input
               id="email"
               type="email"
-              placeholder="alex_design@gmail.com"
+              placeholder="you@example.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              disabled={loading}
             />
           </div>
 
@@ -86,6 +85,7 @@ function Register() {
               placeholder="**********"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              disabled={loading}
             />
             <div className="password-hint">
               Must be at least 8 characters long.
@@ -100,11 +100,7 @@ function Register() {
               placeholder="**********"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-            />
-          </div>
 
-          <button type="submit" className="auth-button">
-            Create your account
           </button>
         </form>
 

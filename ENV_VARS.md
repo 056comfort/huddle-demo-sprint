@@ -20,7 +20,7 @@ not in a Dockerfile — Render injects them at runtime.
 Local dev (`npm run dev`): backend engineer uses their own local `.env` with their own
 local DATABASE_URL/JWT_SECRET — never the real Render/Supabase values.
 
-Health check route: `GET /health` — set this in Render → service → Settings → Health Check Path.
+Health check route: `GET /api/health` — set this in Render → service → Settings → Health Check Path.
 Container start command: `npm start` (after Render runs `npm run build`) — set as the Start
 Command in Render's service settings, or Render may auto-detect this from `package.json`.
 
