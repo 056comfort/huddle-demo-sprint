@@ -1,11 +1,7 @@
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
-const channels = ["general", "design", "development"];
-
-const directMessages = [
-  { id: "sarah", name: "Sarah", status: "online", avatar: "S" },
-  { id: "david", name: "David", status: "online", avatar: "D" },
-];
+const DEFAULT_CHANNELS = ["general", "design", "development"];
 
 function HashIcon() {
   return (
@@ -116,6 +112,41 @@ function PersonAvatar({ letter, status = "online" }) {
 }
 
 function ChannelList({ activeChannel }) {
+  const [channels, setChannels] = useState(() => {
+    try {
+      const saved = localStorage.getItem("huddle_channels");
+      return saved ? JSON.parse(saved) : DEFAULT_CHANNELS;
+    } catch {
+      return DEFAULT_CHANNELS;
+    }
+  });
+
+  const [directMessages, setDirectMessages] = useState(() => {
+    try {
+      const saved = localStorage.getItem("huddle_dm_contacts");
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  useEffect(() => {
+    const handleStorage = () => {
+      try {
+        const savedChannels = localStorage.getItem("huddle_channels");
+        if (savedChannels) setChannels(JSON.parse(savedChannels));
+        const savedDMs = localStorage.getItem("huddle_dm_contacts");
+        if (savedDMs) setDirectMessages(JSON.parse(savedDMs));
+      } catch {}
+    };
+    window.addEventListener("storage", handleStorage);
+    window.addEventListener("huddle_channels_updated", handleStorage);
+    return () => {
+      window.removeEventListener("storage", handleStorage);
+      window.removeEventListener("huddle_channels_updated", handleStorage);
+    };
+  }, []);
+
   return (
     <div className="sidebar-navigation">
       <Link to="/join-channel" className="sidebar-home-link">

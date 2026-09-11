@@ -5,6 +5,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import CreateWorkspace from "./pages/CreateWorkspace";
 import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 
 // ===== PARTNER'S IMPORTS (CHANNELS) =====
 import ChannelInfoPage from "./pages/ChannelInfoPage.jsx";
@@ -50,6 +51,11 @@ function App() {
         <Route
           path="/forgot-password"
           element={<ForgotPassword />}
+        />
+
+        <Route
+          path="/reset-password"
+          element={<ResetPassword />}
         />
 
         {/* =========================

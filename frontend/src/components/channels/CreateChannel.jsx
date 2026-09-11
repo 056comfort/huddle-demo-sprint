@@ -19,6 +19,19 @@ function CreateChannel() {
 
     setError("");
 
+    // Persist channel to localStorage so it shows in the sidebar
+    try {
+      const DEFAULT_CHANNELS = ["general", "design", "development"];
+      const saved = localStorage.getItem("huddle_channels");
+      const existing = saved ? JSON.parse(saved) : DEFAULT_CHANNELS;
+      const lowerName = cleanName.toLowerCase();
+      if (!existing.includes(lowerName)) {
+        const updated = [...existing, lowerName];
+        localStorage.setItem("huddle_channels", JSON.stringify(updated));
+        window.dispatchEvent(new Event("huddle_channels_updated"));
+      }
+    } catch {}
+
     navigate(`/channel/${encodeURIComponent(cleanName)}`);
   };
 

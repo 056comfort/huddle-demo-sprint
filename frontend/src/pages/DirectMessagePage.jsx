@@ -124,7 +124,14 @@ function DirectMessagePage() {
   const person = people[userId] || people.sarah;
 
   const [message, setMessage] = useState("");
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState(() => {
+    try {
+      const saved = localStorage.getItem(`huddle_dm_${userId}`);
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
 
   const handleSend = (event) => {
     event.preventDefault();
@@ -142,10 +149,13 @@ function DirectMessagePage() {
       }),
     };
 
-    setMessages((currentMessages) => [
-      ...currentMessages,
-      newMessage,
-    ]);
+    setMessages((currentMessages) => {
+      const updated = [...currentMessages, newMessage];
+      try {
+        localStorage.setItem(`huddle_dm_${userId}`, JSON.stringify(updated));
+      } catch {}
+      return updated;
+    });
 
     setMessage("");
   };

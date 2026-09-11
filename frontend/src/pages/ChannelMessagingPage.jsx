@@ -215,32 +215,13 @@ function ChannelMessagingPage() {
 
   const channelName = decodeURIComponent(channelId || "general");
 
-  const defaultMessages = [
-    {
-      id: 1,
-      sender: "Sarah",
-      avatar: "S",
-      message: "Hey everyone 👋 Welcome to the channel!",
-      time: "9:41 AM",
-      isCurrentUser: false,
-    },
-    {
-      id: 2,
-      sender: "David",
-      avatar: "D",
-      message: "Great to have you here in Huddle.",
-      time: "9:43 AM",
-      isCurrentUser: false,
-    },
-  ];
-
   const [currentChannel, setCurrentChannel] = useState(channelName);
   const [messages, setMessages] = useState(() => {
     try {
       const saved = localStorage.getItem(`huddle_msgs_${channelName}`);
-      return saved ? JSON.parse(saved) : defaultMessages;
+      return saved ? JSON.parse(saved) : [];
     } catch {
-      return defaultMessages;
+      return [];
     }
   });
 
@@ -248,9 +229,9 @@ function ChannelMessagingPage() {
     setCurrentChannel(channelName);
     try {
       const saved = localStorage.getItem(`huddle_msgs_${channelName}`);
-      setMessages(saved ? JSON.parse(saved) : defaultMessages);
+      setMessages(saved ? JSON.parse(saved) : []);
     } catch {
-      setMessages(defaultMessages);
+      setMessages([]);
     }
   }
 
@@ -436,7 +417,7 @@ function ChannelMessagingPage() {
         {/* Message composer */}
         <div className="chat-composer">
           <MessageInput
-            onSendMessage={handleSendMessage}
+            onSend={handleSendMessage}
           />
         </div>
 
