@@ -12,19 +12,21 @@ export function useAuth() {
     }
   });
 
+  /**
+   * Call ONLY after a successful backend response that includes a real JWT.
+   * data = { token: string, user: { id, name, email } }
+   * Throws if no token is provided — prevents accidental session creation.
+   */
   const login = (data) => {
-    const tokenVal = data?.token || "demo-jwt-token-" + Date.now();
-    const userVal = data?.user || {
-      id: data?.id || Date.now(),
-      name: data?.name || data?.fullName || (data?.email ? data.email.split('@')[0] : "User"),
-      email: data?.email || "name@gmail.com",
-    };
-
-    localStorage.setItem("token", tokenVal);
+    if (!data?.token) {
+      throw new Error("auth.login() requires a real JWT token from the backend.");
+    }
+    const userVal = data.user;
+    localStorage.setItem("token", data.token);
     localStorage.setItem("huddle_user", JSON.stringify(userVal));
-    setToken(tokenVal);
+    setToken(data.token);
     setUser(userVal);
-    return { token: tokenVal, user: userVal };
+    return { token: data.token, user: userVal };
   };
 
   const register = (data) => {
@@ -45,4 +47,4 @@ export function useAuth() {
     register,
     logout,
   };
-}
+}

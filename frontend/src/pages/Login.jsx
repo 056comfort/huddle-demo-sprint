@@ -51,11 +51,7 @@ function Login() {
   }
 
   const handleGoogleLogin = () => {
-    setLoading(true)
-    auth.login({
-      user: { name: 'Google User', email: 'user@gmail.com' },
-    })
-    setTimeout(() => navigate('/channel/general'), 500)
+    alert('Google Sign-In is not yet configured. Please use email and password.')
   }
 
   return (

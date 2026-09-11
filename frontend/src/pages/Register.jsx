@@ -52,28 +52,18 @@ function Register() {
 
       const data = await response.json()
 
-      if (response.ok && data.success !== false) {
+      if (response.ok && data.token) {
         auth.register({
           token: data.token,
-          user: { name: fullName, email },
+          user: data.user || { name: fullName, email },
         })
         setSuccess('Account created! Redirecting...')
-        setTimeout(() => navigate('/channel/general'), 1000)
+        setTimeout(() => navigate('/join-channel'), 1000)
       } else {
-        // Fallback for demo when endpoint message occurs
-        auth.register({
-          user: { name: fullName, email },
-        })
-        setSuccess('Account created! Redirecting...')
-        setTimeout(() => navigate('/channel/general'), 1000)
+        setError(data.message || 'Could not create account. Please try again.')
       }
     } catch {
-      // Robust client fallback so signup succeeds even if backend endpoint is unavailable
-      auth.register({
-        user: { name: fullName, email },
-      })
-      setSuccess('Account created! Redirecting...')
-      setTimeout(() => navigate('/channel/general'), 1000)
+      setError('Unable to reach the server. Please check your connection.')
     } finally {
       setLoading(false)
     }
