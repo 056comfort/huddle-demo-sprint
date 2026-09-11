@@ -35,7 +35,7 @@ Deployed at: huddle-demo-sprint.vercel.app
 ## CORS
 
 Backend must allow `https://huddle-demo-sprint.vercel.app` (deployed) and
-`http://localhost:3000` (local frontend dev). See `cors-example.js` — unaffected by the
+`https://huddle-demo-sprint.onrender.com` (local frontend dev). See `cors-example.js` — unaffected by the
 Render/Supabase change, still applies as-is.
 
 ## When something breaks during integration

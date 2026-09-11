@@ -6,7 +6,7 @@ const cors = require('cors');
 // Replace with frontend's real deployed URL once it exists.
 // Keep this list short and explicit - avoid using "*" once real user data is involved.
 const allowedOrigins = [
-  'http://localhost:3000',        // local frontend dev
+  'https://huddle-demo-sprint.onrender.com',        // local frontend dev
   'https://huddle-demo-sprint.vercel.app',
 ];
 

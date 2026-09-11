@@ -1,5 +1,5 @@
 // src/api/apiConfig.js
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000'
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://huddle-demo-sprint.onrender.com'
 
 export const endpoints = {
   // Auth — HAS /api
