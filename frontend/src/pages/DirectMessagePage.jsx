@@ -153,7 +153,7 @@ function DirectMessagePage() {
       const updated = [...currentMessages, newMessage];
       try {
         localStorage.setItem(`huddle_dm_${userId}`, JSON.stringify(updated));
-      } catch {}
+      } catch { /* ignore localStorage errors */ }
       return updated;
     });
 

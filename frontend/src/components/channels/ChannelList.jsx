@@ -137,7 +137,7 @@ function ChannelList({ activeChannel }) {
         if (savedChannels) setChannels(JSON.parse(savedChannels));
         const savedDMs = localStorage.getItem("huddle_dm_contacts");
         if (savedDMs) setDirectMessages(JSON.parse(savedDMs));
-      } catch {}
+      } catch { /* ignore localStorage errors */ }
     };
     window.addEventListener("storage", handleStorage);
     window.addEventListener("huddle_channels_updated", handleStorage);

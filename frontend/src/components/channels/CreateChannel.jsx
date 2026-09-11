@@ -30,7 +30,7 @@ function CreateChannel() {
         localStorage.setItem("huddle_channels", JSON.stringify(updated));
         window.dispatchEvent(new Event("huddle_channels_updated"));
       }
-    } catch {}
+    } catch { /* ignore localStorage errors */ }
 
     navigate(`/channel/${encodeURIComponent(cleanName)}`);
   };
