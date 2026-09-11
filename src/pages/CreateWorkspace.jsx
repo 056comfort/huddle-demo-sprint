@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { endpoints } from '../api/apiConfig'
 
 function CreateWorkspace() {
   const [workspaceName, setWorkspaceName] = useState('')
@@ -32,7 +33,7 @@ function CreateWorkspace() {
     setLoading(true)
 
     try {
-      const response = await fetch('/api/workspace', {
+      const response = await fetch(endpoints.createWorkspace, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -48,7 +49,9 @@ function CreateWorkspace() {
 
       if (!response.ok) {
         throw new Error(
-          data.message || data.error || 'Failed to create workspace'
+          data.message ||
+            data.error ||
+            'Failed to create workspace'
         )
       }
 
@@ -84,6 +87,7 @@ function CreateWorkspace() {
       display: 'flex',
       flexDirection: 'column',
       justifyContent: 'center',
+      boxSizing: 'border-box',
     },
 
     header: {
@@ -94,6 +98,7 @@ function CreateWorkspace() {
       color: '#6b7280',
       fontSize: '16px',
       margin: '0',
+      lineHeight: '1.5',
     },
 
     form: {
@@ -123,6 +128,7 @@ function CreateWorkspace() {
       background: '#f9fafb',
       width: '100%',
       boxSizing: 'border-box',
+      fontFamily: 'system-ui, sans-serif',
     },
 
     button: {
@@ -239,7 +245,9 @@ function CreateWorkspace() {
               type="text"
               placeholder="Enter workspace name"
               value={workspaceName}
-              onChange={(e) => setWorkspaceName(e.target.value)}
+              onChange={(e) =>
+                setWorkspaceName(e.target.value)
+              }
               style={styles.input}
               onFocus={handleFocus}
               onBlur={handleBlur}
@@ -260,7 +268,9 @@ function CreateWorkspace() {
               type="text"
               placeholder="What's this workspace for?"
               value={description}
-              onChange={(e) => setDescription(e.target.value)}
+              onChange={(e) =>
+                setDescription(e.target.value)
+              }
               style={styles.input}
               onFocus={handleFocus}
               onBlur={handleBlur}
@@ -293,3 +303,4 @@ function CreateWorkspace() {
 }
 
 export default CreateWorkspace
+
