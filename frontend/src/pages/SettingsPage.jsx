@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
 
 function ArrowLeftIcon() {
   return (
@@ -275,6 +276,7 @@ function applyAccent(accent) {
 
 function SettingsPage() {
   const navigate = useNavigate();
+  const { logout } = useAuth();
 
   const [theme, setTheme] = useState(getStoredTheme);
   const [accent, setAccent] = useState(getStoredAccent);
@@ -317,7 +319,8 @@ function SettingsPage() {
   }
 
   function handleSignOut() {
-    console.log("Sign out requested — ready for backend authentication.");
+    logout();
+    navigate("/login");
   }
 
   return (
