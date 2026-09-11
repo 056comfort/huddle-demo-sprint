@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
 
 function ArrowLeftIcon() {
   return (
@@ -35,12 +36,20 @@ function ChevronIcon() {
 
 function ProfilePage() {
   const navigate = useNavigate();
+  const { user, logout } = useAuth();
 
-  const [name, setName] = useState("Emmanuel");
-  const [email, setEmail] = useState("your@email.com");
+  const [name, setName] = useState(user?.name || "User");
+  const [email, setEmail] = useState(user?.email || "name@gmail.com");
   const [about, setAbout] = useState(
     "Available for collaboration"
   );
+
+  useEffect(() => {
+    if (user?.name) setName(user.name);
+    if (user?.email) setEmail(user.email);
+  }, [user]);
+
+  const avatarInitial = (name || "U").charAt(0).toUpperCase();
 
   const [editingField, setEditingField] = useState(null);
 
@@ -54,12 +63,11 @@ function ProfilePage() {
 
   function saveProfile() {
     setEditingField(null);
+  }
 
-    console.log("Profile ready for backend:", {
-      name,
-      email,
-      about,
-    });
+  function handleSignOut() {
+    logout();
+    navigate("/login");
   }
 
   return (
@@ -94,7 +102,7 @@ function ProfilePage() {
             aria-label="Change profile photo"
           >
             <div className="profile-large-avatar">
-              E
+              {avatarInitial}
             </div>
 
             <span className="avatar-edit-badge">
@@ -317,10 +325,29 @@ function ProfilePage() {
           >
             Edit profile
           </button>
+
+          <button
+            type="button"
+            className="profile-secondary-button profile-signout-button"
+            onClick={handleSignOut}
+            style={{
+              width: '100%',
+              marginTop: '12px',
+              padding: '12px',
+              border: '1px solid #ef4444',
+              color: '#ef4444',
+              background: '#fff',
+              borderRadius: '8px',
+              fontWeight: '600',
+              cursor: 'pointer'
+            }}
+          >
+            Sign Out
+          </button>
         </section>
       </main>
     </div>
   );
 }
 
-export default ProfilePage;
+export default ProfilePage;

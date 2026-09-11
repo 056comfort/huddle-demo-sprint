@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth.js";
 
 import ChannelList from "../components/channels/ChannelList.jsx";
 import MessageList from "../components/messaging/MessageList.jsx";
@@ -205,17 +206,21 @@ function UserAvatar({ letter = "Y" }) {
 function ChannelMessagingPage() {
   const { channelId } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
+
+  const currentUserName = user?.name || "You";
+  const currentUserAvatar = currentUserName.charAt(0).toUpperCase();
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const channelName = decodeURIComponent(channelId || "general");
 
-  const [messages, setMessages] = useState([
+  const defaultMessages = [
     {
       id: 1,
       sender: "Sarah",
       avatar: "S",
-      message: "Hey everyone 👋",
+      message: "Hey everyone 👋 Welcome to the channel!",
       time: "9:41 AM",
       isCurrentUser: false,
     },
@@ -223,38 +228,44 @@ function ChannelMessagingPage() {
       id: 2,
       sender: "David",
       avatar: "D",
-      message: "Hey Sarah! How's everyone doing?",
+      message: "Great to have you here in Huddle.",
       time: "9:43 AM",
       isCurrentUser: false,
     },
-    {
-      id: 3,
-      sender: "Sarah",
-      avatar: "S",
-      message: "Doing great. Ready to get started.",
-      time: "9:44 AM",
-      isCurrentUser: false,
-    },
-    {
-      id: 4,
-      sender: "David",
-      avatar: "D",
-      message: "Same here. Let's get this moving.",
-      time: "9:45 AM",
-      isCurrentUser: false,
-    },
-  ]);
+  ];
 
-  function handleSendMessage(message) {
-    if (!message?.trim()) {
+  const [messages, setMessages] = useState(() => {
+    try {
+      const saved = localStorage.getItem(`huddle_msgs_${channelName}`);
+      return saved ? JSON.parse(saved) : defaultMessages;
+    } catch {
+      return defaultMessages;
+    }
+  });
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(`huddle_msgs_${channelName}`);
+      if (saved) {
+        setMessages(JSON.parse(saved));
+      } else {
+        setMessages(defaultMessages);
+      }
+    } catch {
+      setMessages(defaultMessages);
+    }
+  }, [channelName]);
+
+  function handleSendMessage(messageText) {
+    if (!messageText?.trim()) {
       return;
     }
 
     const newMessage = {
       id: Date.now(),
-      sender: "You",
-      avatar: "Y",
-      message: message.trim(),
+      sender: currentUserName,
+      avatar: currentUserAvatar,
+      message: messageText.trim(),
       time: new Date().toLocaleTimeString([], {
         hour: "numeric",
         minute: "2-digit",
@@ -262,14 +273,14 @@ function ChannelMessagingPage() {
       isCurrentUser: true,
     };
 
-    setMessages((currentMessages) => [
-      ...currentMessages,
-      newMessage,
-    ]);
-
-    console.log("Message ready for backend:", {
-      channelId,
-      message: message.trim(),
+    setMessages((currentMessages) => {
+      const updated = [...currentMessages, newMessage];
+      try {
+        localStorage.setItem(`huddle_msgs_${channelName}`, JSON.stringify(updated));
+      } catch (err) {
+        console.error(err);
+      }
+      return updated;
     });
   }
 
@@ -310,10 +321,10 @@ function ChannelMessagingPage() {
 
         {/* Clickable profile */}
         <Link to="/profile" className="profile">
-          <UserAvatar letter="Y" />
+          <UserAvatar letter={currentUserAvatar} />
 
           <div className="profile-info">
-            <strong>Your Name</strong>
+            <strong>{currentUserName}</strong>
             <span>Online</span>
           </div>
 

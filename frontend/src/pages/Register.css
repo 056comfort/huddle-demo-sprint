@@ -87,6 +87,11 @@
   margin-top: 4px;
 }
 
+.password-hint.hint-warning {
+  color: #d97706;
+  font-weight: 500;
+}
+
 /* ===== BUTTON ===== */
 .auth-button {
   padding: 14px;
