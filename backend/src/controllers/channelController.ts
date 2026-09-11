@@ -384,7 +384,7 @@ export const getChannelByName = async (
 ) => {
   try {
     const currentUserId = req.user?.userId;
-    const { name } = req.params;
+    const name = req.params.name as string;
 
     if (!currentUserId) {
       return res.status(401).json({ message: "Authentication required" });

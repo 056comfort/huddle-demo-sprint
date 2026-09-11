@@ -42,14 +42,7 @@ function HelpIcon() {
     </svg>
   );
 }
-function PersonIcon() {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <circle cx="12" cy="8" r="4" fill="none" stroke="currentColor" strokeWidth="1.7" />
-      <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
-    </svg>
-  );
-}
+
 function StatusDot({ online }) {
   return (
     <span
@@ -99,10 +92,11 @@ function ChannelList({ activeChannelId }) {
   }, []);
 
   // Initial load + auto-refresh every 30 s
+  // setTimeout(0) defers setState calls out of the synchronous effect body
   useEffect(() => {
-    loadData();
-    const interval = setInterval(loadData, 30_000);
-    return () => clearInterval(interval);
+    const t = setTimeout(() => { loadData(); }, 0);
+    const interval = setInterval(() => { loadData(); }, 30_000);
+    return () => { clearTimeout(t); clearInterval(interval); };
   }, [loadData]);
 
   // Filter channels and users based on the search query

@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { endpoints, apiFetch } from "../api/apiConfig.js";
 
 function BackIcon() {
@@ -28,7 +28,6 @@ function NewDirectMessagePage() {
   const [error, setError]     = useState("");
 
   const loadUsers = useCallback(async () => {
-    setLoading(true);
     try {
       const res = await apiFetch(endpoints.users);
       if (res.ok) {
@@ -44,7 +43,10 @@ function NewDirectMessagePage() {
     }
   }, []);
 
-  useEffect(() => { loadUsers(); }, [loadUsers]);
+  useEffect(() => {
+    const t = setTimeout(() => { loadUsers(); }, 0);
+    return () => clearTimeout(t);
+  }, [loadUsers]);
 
   const q = query.toLowerCase().trim();
   const filtered = q
@@ -59,8 +61,6 @@ function NewDirectMessagePage() {
     navigate(`/dm/${userId}`);
   };
 
-  // Find the most recent channel the user has joined, for the back link
-  const backHref = "/join-channel";
 
   return (
     <main className="new-dm-page">

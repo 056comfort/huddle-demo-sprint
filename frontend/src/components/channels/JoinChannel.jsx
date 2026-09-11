@@ -24,8 +24,7 @@ function JoinChannel() {
   const currentUserId = JSON.parse(localStorage.getItem("huddle_user") || "{}").id;
 
   const loadChannels = useCallback(async () => {
-    try {
-      const res = await apiFetch(endpoints.channels);
+    try { const res = await apiFetch(endpoints.channels);
       if (res.ok) {
         const { channels: all } = await res.json();
         setChannels(all || []);
@@ -42,7 +41,10 @@ function JoinChannel() {
     finally { setLoading(false); }
   }, [currentUserId]);
 
-  useEffect(() => { loadChannels(); }, [loadChannels]);
+  useEffect(() => {
+    const t = setTimeout(() => { loadChannels(); }, 0);
+    return () => clearTimeout(t);
+  }, [loadChannels]);
 
   const handleJoin = async (channelId) => {
     setJoining(channelId);

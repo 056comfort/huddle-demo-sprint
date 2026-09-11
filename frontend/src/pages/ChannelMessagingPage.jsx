@@ -149,13 +149,13 @@ function ChannelMessagingPage() {
   /* ── Bootstrap on mount / param change ── */
   useEffect(() => {
     let cancelled = false;
-    setLoadingMsg(true);
-
-    resolveChannel().then((chId) => {
-      if (!cancelled && chId) loadMessages(chId);
-    });
-
-    return () => { cancelled = true; };
+    // setTimeout(0) moves setState calls out of the synchronous effect body
+    const t = setTimeout(() => {
+      resolveChannel().then((chId) => {
+        if (!cancelled && chId) loadMessages(chId);
+      });
+    }, 0);
+    return () => { cancelled = true; clearTimeout(t); };
   }, [resolveChannel, loadMessages]);
 
   /* ── Auto-poll messages every 10 s ── */

@@ -99,7 +99,10 @@ function DirectMessagePage() {
 
   /* ── Bootstrap ── */
   useEffect(() => {
-    initConversation().then((cId) => { if (cId) loadMessages(cId); });
+    const t = setTimeout(() => {
+      initConversation().then((cId) => { if (cId) loadMessages(cId); });
+    }, 0);
+    return () => clearTimeout(t);
   }, [initConversation, loadMessages]);
 
   /* ── Auto-poll every 10 s ── */
