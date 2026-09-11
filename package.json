@@ -3,10 +3,6 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "workspaces": [
-    "frontend",
-    "backend"
-  ],
   "scripts": {
     "dev:frontend": "npm --prefix frontend run dev",
     "build:frontend": "npm --prefix frontend run build",
