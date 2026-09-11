@@ -34,25 +34,17 @@ function Login() {
 
       const data = await response.json()
 
-      if (response.ok && data.success !== false) {
+      if (response.ok && data.token) {
         auth.login({
           token: data.token,
           user: data.user || { email, name: email.split('@')[0] },
         })
-        navigate('/channel/general')
+        navigate('/join-channel')
       } else {
-        // Fallback for valid test login
-        auth.login({
-          user: { email, name: email.split('@')[0] },
-        })
-        navigate('/channel/general')
+        setError(data.message || 'Invalid email or password.')
       }
     } catch {
-      // Robust client fallback so valid details log user in even if backend is offline
-      auth.login({
-        user: { email, name: email.split('@')[0] },
-      })
-      navigate('/channel/general')
+      setError('Unable to reach the server. Please check your connection.')
     } finally {
       setLoading(false)
     }
