@@ -7,6 +7,7 @@ import { endpoints } from '../api/apiConfig'
 function Login() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
@@ -63,7 +64,7 @@ function Login() {
             <input
               id="email"
               type="email"
-              placeholder="you@example.com"
+              placeholder="name@gmail.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               disabled={loading}
@@ -72,14 +73,56 @@ function Login() {
 
           <div className="form-group">
             <label htmlFor="password">Password</label>
-            <input
-              id="password"
-              type="password"
-              placeholder="********"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              disabled={loading}
-            />
+
+            <div className="password-input-wrapper">
+              <input
+                id="password"
+                type={showPassword ? 'text' : 'password'}
+                placeholder="********"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                disabled={loading}
+              />
+
+              <button
+                type="button"
+                className="password-toggle"
+                onClick={() => setShowPassword(!showPassword)}
+                disabled={loading}
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
+              >
+                {showPassword ? (
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M3 3l18 18" />
+                    <path d="M10.58 10.58a2 2 0 0 0 2.83 2.83" />
+                    <path d="M9.88 4.24A9.8 9.8 0 0 1 12 4c5 0 9.27 3.11 11 8a18.5 18.5 0 0 1-3.16 5.19" />
+                    <path d="M6.61 6.61A18.5 18.5 0 0 0 12 20a9.8 9.8 0 0 0 2.12-.24" />
+                  </svg>
+                ) : (
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z" />
+                    <circle cx="12" cy="12" r="3" />
+                  </svg>
+                )}
+              </button>
+            </div>
+
             <div className="form-extra">
               <Link to="/forgot-password" className="forgot-link">
                 Forgot Password?
@@ -96,7 +139,10 @@ function Login() {
           <span>OR CONTINUE WITH</span>
         </div>
 
-        <button className="social-button">
+        <button
+          type="button"
+          className="social-button"
+        >
           <span className="social-icon">G</span>
           Google Account
         </button>
