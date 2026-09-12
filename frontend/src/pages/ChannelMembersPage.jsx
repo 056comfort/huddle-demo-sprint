@@ -189,7 +189,7 @@ function ChannelMembersPage() {
 
         <button 
           className="primary-button" 
-          style={{ marginLeft: 'auto', padding: '6px 12px', display: 'flex', alignItems: 'center', gap: '4px' }}
+          style={{ marginLeft: 'auto', padding: '6px 12px', display: 'flex', alignItems: 'center', gap: '4px', width: 'auto' }}
           onClick={() => setIsAdding(!isAdding)}
         >
           <PlusIcon /> Add Member
@@ -223,7 +223,7 @@ function ChannelMembersPage() {
                 </div>
                 <button 
                   className="primary-button"
-                  style={{ padding: '4px 12px', fontSize: '12px' }}
+                  style={{ padding: '4px 12px', fontSize: '12px', width: 'auto' }}
                   onClick={() => handleAddMember(user.id)}
                   disabled={addingUserId === user.id}
                 >
