@@ -73,9 +73,10 @@ function ChannelList({ activeChannelId }) {
         apiFetch(endpoints.conversations),
       ]);
 
+      const userId = JSON.parse(localStorage.getItem("huddle_user") || "{}").id;
+
       if (chRes.ok) {
         const { channels } = await chRes.json();
-        const userId = JSON.parse(localStorage.getItem("huddle_user") || "{}").id;
         // Only show channels the current user is a member of
         const mine = (channels || []).filter((ch) =>
           ch.members.some((m) => m.userId === userId)

@@ -1,6 +1,6 @@
 import { useMemo, useState, useEffect, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { endpoints, apiFetch } from "../../api/apiConfig";
+import { endpoints, apiFetch } from "../api/apiConfig";
 
 function BackIcon() {
   return (
@@ -44,7 +44,6 @@ function ChannelMembersPage() {
 
   const [search, setSearch] = useState("");
   const [members, setMembers] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [channelName, setChannelName] = useState(decodeURIComponent(channelId || "general"));
 
   const loadMembers = useCallback(async () => {
@@ -80,8 +79,6 @@ function ChannelMembersPage() {
       }
     } catch (e) {
       console.error(e);
-    } finally {
-      setLoading(false);
     }
   }, [channelId]);
 
