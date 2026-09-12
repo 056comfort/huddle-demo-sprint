@@ -91,7 +91,7 @@ function ChannelMembersPage() {
             id: u.id,
             name: isMe ? "You" : u.name,
             role: isMe ? "You" : "Member",
-            status: isMe ? "online" : (onlineUsers[u.id] ? "online" : "offline"),
+            isMe: isMe,
             initial: u.name.charAt(0).toUpperCase(),
             originalName: u.name,
           };
@@ -298,14 +298,14 @@ function ChannelMembersPage() {
                 </div>
 
                 <span
-                  className={`member-status ${member.status}`}
+                  className={`member-status ${member.isMe || onlineUsers[member.id] ? "online" : "offline"}`}
                 />
               </div>
 
               <div className="member-info">
                 <strong>{member.name}</strong>
                 <span>
-                  {member.status === "online"
+                  {member.isMe || onlineUsers[member.id]
                     ? "Online"
                     : "Offline"}
                 </span>
