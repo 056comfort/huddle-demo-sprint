@@ -27,201 +27,155 @@ import NewDirectMessagePage from "./pages/NewDirectMessagePage.jsx";
 import CallPage from "./pages/CallPage.jsx";
 import ChannelCallPage from "./pages/ChannelCallPage.jsx";
 
+import { PresenceProvider } from "./context/PresenceContext.jsx";
+
 import "./App.css";
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        {/* =========================
-            AUTHENTICATION
-        ========================== */}
+    <PresenceProvider>
+      <BrowserRouter>
+        <Routes>
+          {/* =========================
+              AUTHENTICATION
+          ========================== */}
 
-        <Route path="/" element={<Login />} />
+          <Route path="/" element={<Login />} />
 
-        <Route path="/login" element={<Login />} />
+          <Route path="/login" element={<Login />} />
 
-        <Route path="/register" element={<Register />} />
+          <Route path="/register" element={<Register />} />
 
-        <Route
-          path="/create-workspace"
-          element={<CreateWorkspace />}
-        />
+          <Route
+            path="/create-workspace"
+            element={<CreateWorkspace />}
+          />
 
-        <Route
-          path="/forgot-password"
-          element={<ForgotPassword />}
-        />
+          <Route
+            path="/forgot-password"
+            element={<ForgotPassword />}
+          />
 
-        <Route
-          path="/reset-password"
-          element={<ResetPassword />}
-        />
+          <Route
+            path="/reset-password"
+            element={<ResetPassword />}
+          />
 
-        {/* =========================
-            WORKSPACE / CHANNELS
-        ========================== */}
+          {/* =========================
+              WORKSPACE / CHANNELS
+          ========================== */}
 
-        <Route
-          path="/join-channel"
-          element={<JoinChannelPage />}
-        />
+          <Route
+            path="/join-channel"
+            element={<JoinChannelPage />}
+          />
 
-        <Route
-          path="/create-channel"
-          element={<CreateChannelPage />}
-        />
+          <Route
+            path="/create-channel"
+            element={<CreateChannelPage />}
+          />
 
-        {/* =========================
-            CHANNEL MESSAGING
-        ========================== */}
+          {/* =========================
+              CHANNEL MESSAGING
+          ========================== */}
 
-        <Route
-          path="/channel/:channelId"
-          element={<ChannelMessagingPage />}
-        />
+          <Route
+            path="/channel/:channelId"
+            element={<ChannelMessagingPage />}
+          />
 
-        {/* =========================
-            CHANNEL INFORMATION
-        ========================== */}
+          {/* =========================
+              CHANNEL INFORMATION
+          ========================== */}
 
-        <Route
-          path="/channel/:channelId/info"
-          element={<ChannelInfoPage />}
-        />
+          <Route
+            path="/channel/:channelId/info"
+            element={<ChannelInfoPage />}
+          />
 
-        {/* =========================
-            CHANNEL MEMBERS
-        ========================== */}
+          {/* =========================
+              CHANNEL MEMBERS
+          ========================== */}
 
-        <Route
-          path="/channel/:channelId/members"
-          element={<ChannelMembersPage />}
-        />
+          <Route
+            path="/channel/:channelId/members"
+            element={<ChannelMembersPage />}
+          />
 
-        {/* =========================
-            CHANNEL NOTIFICATIONS
-        ========================== */}
+          {/* =========================
+              CHANNEL NOTIFICATIONS
+          ========================== */}
 
-        <Route
-          path="/channel/:channelId/notifications"
-          element={<ChannelNotificationsPage />}
-        />
+          <Route
+            path="/channel/:channelId/notifications"
+            element={<ChannelNotificationsPage />}
+          />
 
-        {/* =========================
-            CHANNEL SETTINGS
-        ========================== */}
+          {/* =========================
+              CHANNEL SETTINGS
+          ========================== */}
 
-        <Route
-          path="/channel/:channelId/settings"
-          element={<ChannelSettingsPage />}
-        />
+          <Route
+            path="/channel/:channelId/settings"
+            element={<ChannelSettingsPage />}
+          />
 
-        {/* =========================
-            GENERAL SETTINGS
-        ========================== */}
+          {/* =========================
+              SETTINGS / SUPPORT / PROFILE
+          ========================== */}
 
-        <Route
-          path="/settings"
-          element={<SettingsPage />}
-        />
+          <Route path="/settings" element={<SettingsPage />} />
 
-        {/* =========================
-            SUPPORT
-        ========================== */}
+          <Route path="/support" element={<SupportPage />} />
 
-        <Route
-          path="/support"
-          element={<SupportPage />}
-        />
+          <Route path="/profile" element={<ProfilePage />} />
 
-        {/* =========================
-            PROFILE
-        ========================== */}
+          {/* =========================
+              DIRECT MESSAGES
+          ========================== */}
 
-        <Route
-          path="/profile"
-          element={<ProfilePage />}
-        />
+          <Route path="/dm/new" element={<NewDirectMessagePage />} />
 
-        {/* =========================
-            NEW DIRECT MESSAGE
-        ========================== */}
+          <Route
+            path="/dm/:userId"
+            element={<DirectMessagePage />}
+          />
 
-        <Route
-          path="/dm/new"
-          element={<NewDirectMessagePage />}
-        />
+          {/* =========================
+              CALLING
+          ========================== */}
 
-        {/* =========================
-            DIRECT MESSAGE
-        ========================== */}
+          <Route
+            path="/call/video/:userId"
+            element={<CallPage callType="video" targetType="dm" />}
+          />
 
-        <Route
-          path="/dm/:userId"
-          element={<DirectMessagePage />}
-        />
+          <Route
+            path="/call/audio/:userId"
+            element={<CallPage callType="audio" targetType="dm" />}
+          />
 
-        {/* =========================
-            DIRECT MESSAGE VIDEO CALL
-        ========================== */}
+          <Route
+            path="/call/video/channel/:channelId"
+            element={<ChannelCallPage callType="video" />}
+          />
 
-        <Route
-          path="/call/video/:userId"
-          element={
-            <CallPage
-              callType="video"
-              targetType="dm"
-            />
-          }
-        />
+          <Route
+            path="/call/audio/channel/:channelId"
+            element={<ChannelCallPage callType="audio" />}
+          />
 
-        {/* =========================
-            DIRECT MESSAGE AUDIO CALL
-        ========================== */}
+          {/* =========================
+              FALLBACK
+          ========================== */}
 
-        <Route
-          path="/call/audio/:userId"
-          element={
-            <CallPage
-              callType="audio"
-              targetType="dm"
-            />
-          }
-        />
-
-        {/* =========================
-            CHANNEL VIDEO CALL
-        ========================== */}
-
-        <Route
-          path="/call/video/channel/:channelId"
-          element={
-            <ChannelCallPage callType="video" />
-          }
-        />
-
-        {/* =========================
-            CHANNEL AUDIO CALL
-        ========================== */}
-
-        <Route
-          path="/call/audio/channel/:channelId"
-          element={
-            <ChannelCallPage callType="audio" />
-          }
-        />
-
-        {/* =========================
-            FALLBACK
-        ========================== */}
-
-        <Route
-          path="*"
-          element={<Navigate to="/" replace />}
-        />
-      </Routes>
-    </BrowserRouter>
+          <Route
+            path="*"
+            element={<Navigate to="/" replace />}
+          />
+        </Routes>
+      </BrowserRouter>
+    </PresenceProvider>
   );
 }
 

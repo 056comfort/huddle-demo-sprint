@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { endpoints, apiFetch } from "../../api/apiConfig";
+import { usePresence } from "../../context/PresenceContext";
 
 /* ─── Icons ──────────────────────────────────────────────────── */
 function HashIcon() {
@@ -60,6 +61,7 @@ function StatusDot({ online }) {
 /* ─── Main Component ─────────────────────────────────────────── */
 function ChannelList({ activeChannelId }) {
   const navigate = useNavigate();
+  const { onlineUsers } = usePresence();
 
   const [query, setQuery]           = useState("");
   const [myChannels, setMyChannels] = useState([]);
@@ -243,7 +245,7 @@ function ChannelList({ activeChannelId }) {
                 <span className="person-avatar">
                   {user.name.charAt(0).toUpperCase()}
                 </span>
-                <StatusDot online={false} />
+                <StatusDot online={onlineUsers[user.id]} />
               </span>
               <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                 {user.name}

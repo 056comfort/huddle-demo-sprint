@@ -1,4 +1,6 @@
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { apiFetch, endpoints } from "../api/apiConfig";
 
 function BackIcon() {
   return (
@@ -56,36 +58,48 @@ function ChevronIcon() {
 }
 
 function ChannelInfoPage() {
-  const { channelId } = useParams();
+  const { channelId: channelParam } = useParams();
   const navigate = useNavigate();
 
-  const channelName = decodeURIComponent(channelId || "general");
+  const [channelData, setChannelData] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  const channelData = {
-    general: {
-      description:
-        "General team conversation for updates, questions and collaboration.",
-      type: "Public channel",
-      creator: "Workspace Admin",
-      members: 8,
-    },
-    design: {
-      description:
-        "Discuss UI, UX, design feedback, visual direction and product decisions.",
-      type: "Public channel",
-      creator: "Workspace Admin",
-      members: 5,
-    },
-    development: {
-      description:
-        "Engineering discussions, bugs, features, technical updates and deployments.",
-      type: "Public channel",
-      creator: "Workspace Admin",
-      members: 6,
-    },
-  };
+  const resolveAndLoadChannel = useCallback(async () => {
+    try {
+      const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(channelParam);
+      const url = isUUID ? endpoints.channelById(channelParam) : endpoints.channelByName(channelParam);
+      
+      const res = await apiFetch(url);
+      if (res.ok) {
+        const { channel } = await res.json();
+        setChannelData(channel);
+        if (!isUUID) {
+          navigate(`/channel/${channel.id}/info`, { replace: true });
+        }
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setLoading(false);
+    }
+  }, [channelParam, navigate]);
 
-  const data = channelData[channelName] || {
+  useEffect(() => {
+    resolveAndLoadChannel();
+  }, [resolveAndLoadChannel]);
+
+  if (loading) {
+    return <div style={{ padding: 20 }}>Loading...</div>;
+  }
+
+  const data = channelData ? {
+    name: channelData.name,
+    description: channelData.description || "Team collaboration channel.",
+    type: "Public channel", // Add logic for private channels if applicable
+    creator: "Workspace Admin", // Update if backend tracks creator
+    members: channelData._count?.members || channelData.members?.length || 0,
+  } : {
+    name: decodeURIComponent(channelParam),
     description: "Team collaboration channel.",
     type: "Public channel",
     creator: "Workspace Admin",
@@ -98,7 +112,7 @@ function ChannelInfoPage() {
         <button
           type="button"
           className="page-back-button"
-          onClick={() => navigate(`/channel/${channelId}`)}
+          onClick={() => navigate(`/channel/${channelData?.id || channelParam}`)}
           aria-label="Back to channel"
         >
           <BackIcon />
@@ -113,7 +127,7 @@ function ChannelInfoPage() {
             <HashIcon />
           </div>
 
-          <h2>#{channelName}</h2>
+          <h2>#{data.name}</h2>
 
           <p>{data.description}</p>
         </div>
@@ -122,7 +136,7 @@ function ChannelInfoPage() {
           <button
             type="button"
             onClick={() =>
-              navigate(`/channel/${channelId}/members`)
+              navigate(`/channel/${channelData?.id || channelParam}/members`)
             }
           >
             <div>
@@ -136,7 +150,7 @@ function ChannelInfoPage() {
           <button
             type="button"
             onClick={() =>
-              navigate(`/channel/${channelId}/notifications`)
+              navigate(`/channel/${channelData?.id || channelParam}/notifications`)
             }
           >
             <div>
@@ -150,7 +164,7 @@ function ChannelInfoPage() {
           <button
             type="button"
             onClick={() =>
-              navigate(`/channel/${channelId}/settings`)
+              navigate(`/channel/${channelData?.id || channelParam}/settings`)
             }
           >
             <div>
@@ -175,7 +189,7 @@ function ChannelInfoPage() {
 
           <div>
             <span>Channel name</span>
-            <strong>#{channelName}</strong>
+            <strong>#{data.name}</strong>
           </div>
         </div>
 

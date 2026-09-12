@@ -52,6 +52,10 @@ const channelCallUsers = new Map<
   Map<string, string>
 >();
 
+export const isUserOnline = (userId: string) => {
+  return userSockets.has(userId) && userSockets.get(userId)!.size > 0;
+};
+
 export const initializeSocket = (
   httpServer: HttpServer
 ) => {
@@ -130,9 +134,15 @@ export const initializeSocket = (
     // Register this socket under the authenticated user.
     if (!userSockets.has(userId)) {
       userSockets.set(userId, new Set());
+      socket.broadcast.emit("user:online", { userId });
     }
 
     userSockets.get(userId)!.add(socket.id);
+
+    socket.on("presence:request", () => {
+      const onlineUsers = Array.from(userSockets.keys());
+      socket.emit("presence:initial", { onlineUsers });
+    });
 
     /*
     ============================================================
@@ -682,6 +692,7 @@ export const initializeSocket = (
 
         if (sockets.size === 0) {
           userSockets.delete(userId);
+          socket.broadcast.emit("user:offline", { userId });
         }
       }
 

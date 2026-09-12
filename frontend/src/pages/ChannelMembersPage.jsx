@@ -1,6 +1,7 @@
 import { useMemo, useState, useEffect, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { endpoints, apiFetch } from "../api/apiConfig";
+import { usePresence } from "../context/PresenceContext";
 
 function BackIcon() {
   return (
@@ -58,6 +59,7 @@ function PlusIcon() {
 function ChannelMembersPage() {
   const { channelId: channelParam } = useParams();
   const navigate = useNavigate();
+  const { onlineUsers } = usePresence();
 
   const [search, setSearch] = useState("");
   const [members, setMembers] = useState([]);
@@ -89,7 +91,7 @@ function ChannelMembersPage() {
             id: u.id,
             name: isMe ? "You" : u.name,
             role: isMe ? "You" : "Member",
-            status: isMe ? "online" : "offline", // Dummy status for now
+            status: isMe ? "online" : (onlineUsers[u.id] ? "online" : "offline"),
             initial: u.name.charAt(0).toUpperCase(),
             originalName: u.name,
           };
