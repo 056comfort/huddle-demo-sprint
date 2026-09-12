@@ -238,6 +238,12 @@ textarea:focus-visible {
   border-radius: 999px;
 }
 
+.sidebar-navigation {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
 .workspace-header {
   display: flex;
   align-items: center;
@@ -499,7 +505,7 @@ textarea:focus-visible {
   display: flex;
   align-items: center;
   gap: 9px;
-  margin: 0 14px 13px;
+  margin: auto 14px 13px; /* Auto top margin pushes it to the bottom */
   padding: 8px;
   border-radius: 7px;
   color: inherit;

@@ -52,11 +52,13 @@ function Register() {
 
       const data = await response.json()
 
-      if (response.ok && data.token) {
-        auth.register({
-          token: data.token,
-          user: data.user || { name: fullName, email },
-        })
+      if (response.ok && (data.token || data.user)) {
+        if (data.token) {
+          auth.register({
+            token: data.token,
+            user: data.user || { name: fullName, email },
+          })
+        }
         setSuccess('Account created! Redirecting...')
         setTimeout(() => navigate('/join-channel'), 1000)
       } else {
@@ -70,12 +72,15 @@ function Register() {
   }
 
   const handleGoogleLogin = () => {
+    const googleEmail = window.prompt("Enter your Google email to sign up:");
+    if (!googleEmail) return;
+
     setLoading(true)
     auth.register({
-      user: { name: 'Google User', email: 'user@gmail.com' },
+      user: { name: googleEmail.split("@")[0], email: googleEmail },
     })
     setSuccess('Signed in with Google! Redirecting...')
-    setTimeout(() => navigate('/channel/general'), 800)
+    setTimeout(() => navigate('/join-channel'), 800)
   }
 
   return (

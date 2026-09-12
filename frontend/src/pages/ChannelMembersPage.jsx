@@ -56,12 +56,15 @@ function PlusIcon() {
 }
 
 function ChannelMembersPage() {
-  const { channelId } = useParams();
+  const { channelId: channelParam } = useParams();
   const navigate = useNavigate();
 
   const [search, setSearch] = useState("");
   const [members, setMembers] = useState([]);
-  const [channelName, setChannelName] = useState(decodeURIComponent(channelId || "general"));
+  const [channelId, setChannelId] = useState(
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(channelParam) ? channelParam : null
+  );
+  const [channelName, setChannelName] = useState(decodeURIComponent(channelParam || "general"));
   
   // Add Member State
   const [isAdding, setIsAdding] = useState(false);
@@ -69,9 +72,10 @@ function ChannelMembersPage() {
   const [allUsers, setAllUsers] = useState([]);
   const [addingUserId, setAddingUserId] = useState(null);
 
-  const loadMembers = useCallback(async () => {
+  const loadMembers = useCallback(async (idToLoad) => {
+    if (!idToLoad) return;
     try {
-      const res = await apiFetch(endpoints.channelById(channelId));
+      const res = await apiFetch(endpoints.channelById(idToLoad));
       if (res.ok) {
         const { channel } = await res.json();
         setChannelName(channel.name);
@@ -103,7 +107,7 @@ function ChannelMembersPage() {
     } catch (e) {
       console.error(e);
     }
-  }, [channelId]);
+  }, []);
 
   const loadAllUsers = useCallback(async () => {
     try {
@@ -117,16 +121,40 @@ function ChannelMembersPage() {
     }
   }, []);
 
+  const resolveChannel = useCallback(async () => {
+    const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(channelParam);
+    if (isUUID) {
+      setChannelId(channelParam);
+      return channelParam;
+    } else {
+      try {
+        const res = await apiFetch(endpoints.channelByName(channelParam));
+        if (res.ok) {
+          const { channel } = await res.json();
+          navigate(`/channel/${channel.id}/members`, { replace: true });
+          setChannelId(channel.id);
+          return channel.id;
+        }
+      } catch (e) {
+        console.error("Failed to resolve channel name", e);
+      }
+    }
+    return null;
+  }, [channelParam, navigate]);
+
   useEffect(() => {
-    const t = setTimeout(() => { 
-      loadMembers(); 
-      loadAllUsers();
-    }, 0);
-    return () => clearTimeout(t);
-  }, [loadMembers, loadAllUsers]);
+    const init = async () => {
+      const resolvedId = await resolveChannel();
+      if (resolvedId) {
+        loadMembers(resolvedId);
+        loadAllUsers();
+      }
+    };
+    init();
+  }, [resolveChannel, loadMembers, loadAllUsers]);
 
   const handleAddMember = async (userId) => {
-    if (addingUserId) return;
+    if (addingUserId || !channelId) return;
     setAddingUserId(userId);
     try {
       const res = await apiFetch(endpoints.addChannelMember(channelId), {
@@ -134,16 +162,21 @@ function ChannelMembersPage() {
         body: JSON.stringify({ userId }),
       });
       if (res.ok) {
-        await loadMembers();
+        await loadMembers(channelId);
         setIsAdding(false);
         setAddSearch("");
       } else {
-        const err = await res.json();
+        let err;
+        try {
+          err = await res.json();
+        } catch {
+          err = { message: `Server returned ${res.status}` };
+        }
         alert(err.message || "Failed to add member");
       }
     } catch (e) {
       console.error(e);
-      alert("Failed to add member");
+      alert("Error adding member: " + e.message);
     } finally {
       setAddingUserId(null);
     }
