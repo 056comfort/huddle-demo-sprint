@@ -292,6 +292,7 @@ textarea:focus-visible {
   flex-direction: column;
   min-height: 0;
   padding: 4px 14px 0;
+  overflow-y: auto;
 }
 
 .sidebar-home-link {

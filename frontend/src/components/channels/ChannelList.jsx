@@ -68,9 +68,9 @@ function ChannelList({ activeChannelId }) {
 
   const loadData = useCallback(async () => {
     try {
-      const [chRes, usersRes] = await Promise.all([
+      const [chRes, dmsRes] = await Promise.all([
         apiFetch(endpoints.channels),
-        apiFetch(endpoints.users),
+        apiFetch(endpoints.conversations),
       ]);
 
       if (chRes.ok) {
@@ -83,9 +83,19 @@ function ChannelList({ activeChannelId }) {
         setMyChannels(mine);
       }
 
-      if (usersRes.ok) {
-        const { users } = await usersRes.json();
-        setAllUsers(users || []);
+      if (dmsRes.ok) {
+        const { conversations } = await dmsRes.json();
+        // Extract the other user from each direct message
+        const activeUsers = [];
+        (conversations || []).forEach(conv => {
+          if (!conv.isGroup) {
+            const otherUser = conv.members.find(m => m.userId !== userId)?.user;
+            if (otherUser) {
+              activeUsers.push(otherUser);
+            }
+          }
+        });
+        setAllUsers(activeUsers);
       }
     } catch { /* network offline – keep existing state */ }
     finally { setLoading(false); }
