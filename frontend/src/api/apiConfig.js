@@ -19,6 +19,7 @@ export const endpoints = {
   channelByName:      (name) => `${API_BASE_URL}/api/channels/by-name/${encodeURIComponent(name)}`,
   channelMessages:    (id)   => `${API_BASE_URL}/api/channels/${id}/messages`,
   joinChannel:        (id)   => `${API_BASE_URL}/api/channels/${id}/members`,
+  addChannelMember:   (id)   => `${API_BASE_URL}/api/channels/${id}/members/add`,
   leaveChannel:       (id)   => `${API_BASE_URL}/api/channels/${id}/members/me`,
 
   // Direct Messages (conversations)

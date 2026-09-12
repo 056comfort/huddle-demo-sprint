@@ -63,23 +63,24 @@ function ChannelList({ activeChannelId }) {
 
   const [query, setQuery]           = useState("");
   const [myChannels, setMyChannels] = useState([]);
+  const [activeUsers, setActiveUsers] = useState([]);
   const [allUsers, setAllUsers]     = useState([]);
   const [loading, setLoading]       = useState(true);
 
-  const loadData = useCallback(async () => {
+  const currentUserId = JSON.parse(localStorage.getItem("huddle_user") || "{}").id;
+
     try {
-      const [chRes, dmsRes] = await Promise.all([
+      const [chRes, dmsRes, usersRes] = await Promise.all([
         apiFetch(endpoints.channels),
         apiFetch(endpoints.conversations),
+        apiFetch(endpoints.users),
       ]);
-
-      const userId = JSON.parse(localStorage.getItem("huddle_user") || "{}").id;
 
       if (chRes.ok) {
         const { channels } = await chRes.json();
         // Only show channels the current user is a member of
         const mine = (channels || []).filter((ch) =>
-          ch.members.some((m) => m.userId === userId)
+          ch.members.some((m) => m.userId === currentUserId)
         );
         setMyChannels(mine);
       }
@@ -87,16 +88,21 @@ function ChannelList({ activeChannelId }) {
       if (dmsRes.ok) {
         const { conversations } = await dmsRes.json();
         // Extract the other user from each direct message
-        const activeUsers = [];
+        const activeUserList = [];
         (conversations || []).forEach(conv => {
           if (!conv.isGroup) {
-            const otherUser = conv.members.find(m => m.userId !== userId)?.user;
+            const otherUser = conv.members.find(m => m.userId !== currentUserId)?.user;
             if (otherUser) {
-              activeUsers.push(otherUser);
+              activeUserList.push(otherUser);
             }
           }
         });
-        setAllUsers(activeUsers);
+        setActiveUsers(activeUserList);
+      }
+
+      if (usersRes.ok) {
+        const { users } = await usersRes.json();
+        setAllUsers(users || []);
       }
     } catch { /* network offline – keep existing state */ }
     finally { setLoading(false); }
@@ -118,10 +124,12 @@ function ChannelList({ activeChannelId }) {
   const filteredUsers = q
     ? allUsers.filter(
         (u) =>
+          u.id !== currentUserId && (
           u.name.toLowerCase().includes(q) ||
           u.email.toLowerCase().includes(q)
+          )
       )
-    : allUsers;
+    : activeUsers;
 
   return (
     <div className="sidebar-navigation">

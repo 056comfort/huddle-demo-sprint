@@ -38,6 +38,23 @@ function SearchIcon() {
   );
 }
 
+function PlusIcon() {
+  return (
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M12 5v14M5 12h14" />
+    </svg>
+  );
+}
+
 function ChannelMembersPage() {
   const { channelId } = useParams();
   const navigate = useNavigate();
@@ -45,6 +62,12 @@ function ChannelMembersPage() {
   const [search, setSearch] = useState("");
   const [members, setMembers] = useState([]);
   const [channelName, setChannelName] = useState(decodeURIComponent(channelId || "general"));
+  
+  // Add Member State
+  const [isAdding, setIsAdding] = useState(false);
+  const [addSearch, setAddSearch] = useState("");
+  const [allUsers, setAllUsers] = useState([]);
+  const [addingUserId, setAddingUserId] = useState(null);
 
   const loadMembers = useCallback(async () => {
     try {
@@ -82,10 +105,49 @@ function ChannelMembersPage() {
     }
   }, [channelId]);
 
+  const loadAllUsers = useCallback(async () => {
+    try {
+      const res = await apiFetch(endpoints.users);
+      if (res.ok) {
+        const { users } = await res.json();
+        setAllUsers(users || []);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  }, []);
+
   useEffect(() => {
-    const t = setTimeout(() => { loadMembers(); }, 0);
+    const t = setTimeout(() => { 
+      loadMembers(); 
+      loadAllUsers();
+    }, 0);
     return () => clearTimeout(t);
-  }, [loadMembers]);
+  }, [loadMembers, loadAllUsers]);
+
+  const handleAddMember = async (userId) => {
+    if (addingUserId) return;
+    setAddingUserId(userId);
+    try {
+      const res = await apiFetch(endpoints.addChannelMember(channelId), {
+        method: "POST",
+        body: JSON.stringify({ userId }),
+      });
+      if (res.ok) {
+        await loadMembers();
+        setIsAdding(false);
+        setAddSearch("");
+      } else {
+        const err = await res.json();
+        alert(err.message || "Failed to add member");
+      }
+    } catch (e) {
+      console.error(e);
+      alert("Failed to add member");
+    } finally {
+      setAddingUserId(null);
+    }
+  };
 
   const filteredMembers = useMemo(() => {
     const value = search.toLowerCase().trim();
@@ -98,6 +160,15 @@ function ChannelMembersPage() {
       member.originalName.toLowerCase().includes(value) || member.name.toLowerCase().includes(value)
     );
   }, [search, members]);
+
+  const addableUsers = useMemo(() => {
+    const value = addSearch.toLowerCase().trim();
+    const existingIds = new Set(members.map(m => m.id));
+    const available = allUsers.filter(u => !existingIds.has(u.id));
+    
+    if (!value) return available;
+    return available.filter(u => u.name.toLowerCase().includes(value) || u.email.toLowerCase().includes(value));
+  }, [addSearch, allUsers, members]);
 
   return (
     <main className="channel-members-page">
@@ -115,7 +186,57 @@ function ChannelMembersPage() {
           <h1>Members</h1>
           <p>#{channelName}</p>
         </div>
+
+        <button 
+          className="primary-button" 
+          style={{ marginLeft: 'auto', padding: '6px 12px', display: 'flex', alignItems: 'center', gap: '4px' }}
+          onClick={() => setIsAdding(!isAdding)}
+        >
+          <PlusIcon /> Add Member
+        </button>
       </header>
+
+      {isAdding && (
+        <section className="channel-members-content" style={{ borderBottom: '1px solid var(--border-color)', paddingBottom: '20px', backgroundColor: 'var(--bg-secondary)' }}>
+          <h3>Add people to #{channelName}</h3>
+          <div className="member-search" style={{ marginTop: '10px' }}>
+            <SearchIcon />
+            <input
+              type="search"
+              value={addSearch}
+              onChange={(e) => setAddSearch(e.target.value)}
+              placeholder="Search by name or email"
+            />
+          </div>
+          
+          <div className="members-list" style={{ marginTop: '16px', maxHeight: '200px', overflowY: 'auto' }}>
+            {addableUsers.map(user => (
+              <article key={user.id} className="member-card">
+                <div className="member-avatar-wrap">
+                  <div className="member-avatar">
+                    {user.name.charAt(0).toUpperCase()}
+                  </div>
+                </div>
+                <div className="member-info">
+                  <strong>{user.name}</strong>
+                  <span style={{ fontSize: '12px' }}>{user.email}</span>
+                </div>
+                <button 
+                  className="primary-button"
+                  style={{ padding: '4px 12px', fontSize: '12px' }}
+                  onClick={() => handleAddMember(user.id)}
+                  disabled={addingUserId === user.id}
+                >
+                  {addingUserId === user.id ? 'Adding...' : 'Add'}
+                </button>
+              </article>
+            ))}
+            {addableUsers.length === 0 && (
+              <div className="members-empty">No users found to add.</div>
+            )}
+          </div>
+        </section>
+      )}
 
       <section className="channel-members-content">
         <div className="member-search">

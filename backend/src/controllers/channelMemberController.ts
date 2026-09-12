@@ -190,3 +190,75 @@ export const getChannelMembers = async (
     });
   }
 };
+
+// ADD CHANNEL MEMBER
+export const addChannelMember = async (
+  req: AuthRequest,
+  res: Response
+) => {
+  try {
+    const currentUserId = req.user?.userId;
+    const channelId = req.params.channelId as string;
+    const { userId } = req.body;
+
+    if (!currentUserId) {
+      return res.status(401).json({ message: "Authentication required" });
+    }
+
+    if (!userId) {
+      return res.status(400).json({ message: "userId is required to add a member" });
+    }
+
+    // Verify current user is a member of the channel
+    const currentUserMembership = await prisma.channelMember.findUnique({
+      where: { channelId_userId: { channelId, userId: currentUserId } },
+    });
+
+    if (!currentUserMembership) {
+      return res.status(403).json({ message: "You must be a member of the channel to add others" });
+    }
+
+    // Check if target user exists
+    const targetUser = await prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!targetUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Check if target user is already a member
+    const existingMembership = await prisma.channelMember.findUnique({
+      where: { channelId_userId: { channelId, userId } },
+    });
+
+    if (existingMembership) {
+      return res.status(409).json({ message: "User is already a member of this channel" });
+    }
+
+    // Add member
+    const membership = await prisma.channelMember.create({
+      data: {
+        channelId,
+        userId,
+      },
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+      },
+    });
+
+    return res.status(201).json({
+      message: "Member added successfully",
+      membership,
+    });
+  } catch (error) {
+    console.error("Add channel member error:", error);
+    return res.status(500).json({ message: "Failed to add channel member" });
+  }
+};
