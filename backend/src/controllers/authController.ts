@@ -21,29 +21,31 @@ export const register = async (
     }
 
     const existingUser = await prisma.user.findUnique({
-      where: {
-        email,
-      },
+      where: { email },
     });
 
     if (existingUser) {
       return res.status(409).json({
-        message: "User already exists",
+        message: "An account with this email already exists",
       });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const user = await prisma.user.create({
-      data: {
-        name,
-        email,
-        password: hashedPassword,
-      },
+      data: { name, email, password: hashedPassword },
     });
+
+    const secret = process.env.JWT_SECRET;
+    if (!secret) {
+      return res.status(500).json({ message: "JWT secret is not configured" });
+    }
+
+    const token = jwt.sign({ userId: user.id }, secret, { expiresIn: "7d" });
 
     return res.status(201).json({
       message: "User registered successfully",
+      token,
       user: {
         id: user.id,
         name: user.name,
@@ -52,12 +54,10 @@ export const register = async (
     });
   } catch (error) {
     console.error("Registration error:", error);
-
-    return res.status(500).json({
-      message: "Registration failed",
-    });
+    return res.status(500).json({ message: "Registration failed" });
   }
 };
+
 
 // LOGIN
 export const login = async (
