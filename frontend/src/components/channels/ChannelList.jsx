@@ -68,7 +68,7 @@ function ChannelList({ activeChannelId }) {
   const [loading, setLoading]       = useState(true);
 
   const currentUserId = JSON.parse(localStorage.getItem("huddle_user") || "{}").id;
-
+  const loadData = useCallback(async () => {
     try {
       const [chRes, dmsRes, usersRes] = await Promise.all([
         apiFetch(endpoints.channels),
