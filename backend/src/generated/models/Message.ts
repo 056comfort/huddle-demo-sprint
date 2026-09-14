@@ -29,10 +29,10 @@ export type MessageMinAggregateOutputType = {
   content: string | null
   conversationId: string | null
   senderId: string | null
-  isEdited: boolean | null
-  isDeleted: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
+  isDeleted: boolean | null
+  isEdited: boolean | null
 }
 
 export type MessageMaxAggregateOutputType = {
@@ -40,10 +40,10 @@ export type MessageMaxAggregateOutputType = {
   content: string | null
   conversationId: string | null
   senderId: string | null
-  isEdited: boolean | null
-  isDeleted: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
+  isDeleted: boolean | null
+  isEdited: boolean | null
 }
 
 export type MessageCountAggregateOutputType = {
@@ -51,10 +51,10 @@ export type MessageCountAggregateOutputType = {
   content: number
   conversationId: number
   senderId: number
-  isEdited: number
-  isDeleted: number
   createdAt: number
   updatedAt: number
+  isDeleted: number
+  isEdited: number
   _all: number
 }
 
@@ -64,10 +64,10 @@ export type MessageMinAggregateInputType = {
   content?: true
   conversationId?: true
   senderId?: true
-  isEdited?: true
-  isDeleted?: true
   createdAt?: true
   updatedAt?: true
+  isDeleted?: true
+  isEdited?: true
 }
 
 export type MessageMaxAggregateInputType = {
@@ -75,10 +75,10 @@ export type MessageMaxAggregateInputType = {
   content?: true
   conversationId?: true
   senderId?: true
-  isEdited?: true
-  isDeleted?: true
   createdAt?: true
   updatedAt?: true
+  isDeleted?: true
+  isEdited?: true
 }
 
 export type MessageCountAggregateInputType = {
@@ -86,10 +86,10 @@ export type MessageCountAggregateInputType = {
   content?: true
   conversationId?: true
   senderId?: true
-  isEdited?: true
-  isDeleted?: true
   createdAt?: true
   updatedAt?: true
+  isDeleted?: true
+  isEdited?: true
   _all?: true
 }
 
@@ -170,10 +170,10 @@ export type MessageGroupByOutputType = {
   content: string
   conversationId: string
   senderId: string
-  isEdited: boolean
-  isDeleted: boolean
   createdAt: Date
   updatedAt: Date
+  isDeleted: boolean
+  isEdited: boolean
   _count: MessageCountAggregateOutputType | null
   _min: MessageMinAggregateOutputType | null
   _max: MessageMaxAggregateOutputType | null
@@ -202,10 +202,10 @@ export type MessageWhereInput = {
   content?: Prisma.StringFilter<"Message"> | string
   conversationId?: Prisma.StringFilter<"Message"> | string
   senderId?: Prisma.StringFilter<"Message"> | string
-  isEdited?: Prisma.BoolFilter<"Message"> | boolean
-  isDeleted?: Prisma.BoolFilter<"Message"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Message"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Message"> | Date | string
+  isDeleted?: Prisma.BoolFilter<"Message"> | boolean
+  isEdited?: Prisma.BoolFilter<"Message"> | boolean
   conversation?: Prisma.XOR<Prisma.ConversationScalarRelationFilter, Prisma.ConversationWhereInput>
   sender?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
 }
@@ -215,10 +215,10 @@ export type MessageOrderByWithRelationInput = {
   content?: Prisma.SortOrder
   conversationId?: Prisma.SortOrder
   senderId?: Prisma.SortOrder
-  isEdited?: Prisma.SortOrder
-  isDeleted?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  isDeleted?: Prisma.SortOrder
+  isEdited?: Prisma.SortOrder
   conversation?: Prisma.ConversationOrderByWithRelationInput
   sender?: Prisma.UserOrderByWithRelationInput
 }
@@ -231,10 +231,10 @@ export type MessageWhereUniqueInput = Prisma.AtLeast<{
   content?: Prisma.StringFilter<"Message"> | string
   conversationId?: Prisma.StringFilter<"Message"> | string
   senderId?: Prisma.StringFilter<"Message"> | string
-  isEdited?: Prisma.BoolFilter<"Message"> | boolean
-  isDeleted?: Prisma.BoolFilter<"Message"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Message"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Message"> | Date | string
+  isDeleted?: Prisma.BoolFilter<"Message"> | boolean
+  isEdited?: Prisma.BoolFilter<"Message"> | boolean
   conversation?: Prisma.XOR<Prisma.ConversationScalarRelationFilter, Prisma.ConversationWhereInput>
   sender?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
 }, "id">
@@ -244,10 +244,10 @@ export type MessageOrderByWithAggregationInput = {
   content?: Prisma.SortOrder
   conversationId?: Prisma.SortOrder
   senderId?: Prisma.SortOrder
-  isEdited?: Prisma.SortOrder
-  isDeleted?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  isDeleted?: Prisma.SortOrder
+  isEdited?: Prisma.SortOrder
   _count?: Prisma.MessageCountOrderByAggregateInput
   _max?: Prisma.MessageMaxOrderByAggregateInput
   _min?: Prisma.MessageMinOrderByAggregateInput
@@ -261,19 +261,19 @@ export type MessageScalarWhereWithAggregatesInput = {
   content?: Prisma.StringWithAggregatesFilter<"Message"> | string
   conversationId?: Prisma.StringWithAggregatesFilter<"Message"> | string
   senderId?: Prisma.StringWithAggregatesFilter<"Message"> | string
-  isEdited?: Prisma.BoolWithAggregatesFilter<"Message"> | boolean
-  isDeleted?: Prisma.BoolWithAggregatesFilter<"Message"> | boolean
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Message"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Message"> | Date | string
+  isDeleted?: Prisma.BoolWithAggregatesFilter<"Message"> | boolean
+  isEdited?: Prisma.BoolWithAggregatesFilter<"Message"> | boolean
 }
 
 export type MessageCreateInput = {
   id?: string
   content: string
-  isEdited?: boolean
-  isDeleted?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  isDeleted?: boolean
+  isEdited?: boolean
   conversation: Prisma.ConversationCreateNestedOneWithoutMessagesInput
   sender: Prisma.UserCreateNestedOneWithoutMessagesInput
 }
@@ -283,19 +283,19 @@ export type MessageUncheckedCreateInput = {
   content: string
   conversationId: string
   senderId: string
-  isEdited?: boolean
-  isDeleted?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  isDeleted?: boolean
+  isEdited?: boolean
 }
 
 export type MessageUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
-  isEdited?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isDeleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isDeleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isEdited?: Prisma.BoolFieldUpdateOperationsInput | boolean
   conversation?: Prisma.ConversationUpdateOneRequiredWithoutMessagesNestedInput
   sender?: Prisma.UserUpdateOneRequiredWithoutMessagesNestedInput
 }
@@ -305,10 +305,10 @@ export type MessageUncheckedUpdateInput = {
   content?: Prisma.StringFieldUpdateOperationsInput | string
   conversationId?: Prisma.StringFieldUpdateOperationsInput | string
   senderId?: Prisma.StringFieldUpdateOperationsInput | string
-  isEdited?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isDeleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isDeleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isEdited?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type MessageCreateManyInput = {
@@ -316,19 +316,19 @@ export type MessageCreateManyInput = {
   content: string
   conversationId: string
   senderId: string
-  isEdited?: boolean
-  isDeleted?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  isDeleted?: boolean
+  isEdited?: boolean
 }
 
 export type MessageUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
-  isEdited?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isDeleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isDeleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isEdited?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type MessageUncheckedUpdateManyInput = {
@@ -336,10 +336,10 @@ export type MessageUncheckedUpdateManyInput = {
   content?: Prisma.StringFieldUpdateOperationsInput | string
   conversationId?: Prisma.StringFieldUpdateOperationsInput | string
   senderId?: Prisma.StringFieldUpdateOperationsInput | string
-  isEdited?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isDeleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isDeleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isEdited?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type MessageListRelationFilter = {
@@ -357,10 +357,10 @@ export type MessageCountOrderByAggregateInput = {
   content?: Prisma.SortOrder
   conversationId?: Prisma.SortOrder
   senderId?: Prisma.SortOrder
-  isEdited?: Prisma.SortOrder
-  isDeleted?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  isDeleted?: Prisma.SortOrder
+  isEdited?: Prisma.SortOrder
 }
 
 export type MessageMaxOrderByAggregateInput = {
@@ -368,10 +368,10 @@ export type MessageMaxOrderByAggregateInput = {
   content?: Prisma.SortOrder
   conversationId?: Prisma.SortOrder
   senderId?: Prisma.SortOrder
-  isEdited?: Prisma.SortOrder
-  isDeleted?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  isDeleted?: Prisma.SortOrder
+  isEdited?: Prisma.SortOrder
 }
 
 export type MessageMinOrderByAggregateInput = {
@@ -379,10 +379,10 @@ export type MessageMinOrderByAggregateInput = {
   content?: Prisma.SortOrder
   conversationId?: Prisma.SortOrder
   senderId?: Prisma.SortOrder
-  isEdited?: Prisma.SortOrder
-  isDeleted?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  isDeleted?: Prisma.SortOrder
+  isEdited?: Prisma.SortOrder
 }
 
 export type MessageCreateNestedManyWithoutSenderInput = {
@@ -472,10 +472,10 @@ export type MessageUncheckedUpdateManyWithoutConversationNestedInput = {
 export type MessageCreateWithoutSenderInput = {
   id?: string
   content: string
-  isEdited?: boolean
-  isDeleted?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  isDeleted?: boolean
+  isEdited?: boolean
   conversation: Prisma.ConversationCreateNestedOneWithoutMessagesInput
 }
 
@@ -483,10 +483,10 @@ export type MessageUncheckedCreateWithoutSenderInput = {
   id?: string
   content: string
   conversationId: string
-  isEdited?: boolean
-  isDeleted?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  isDeleted?: boolean
+  isEdited?: boolean
 }
 
 export type MessageCreateOrConnectWithoutSenderInput = {
@@ -523,19 +523,19 @@ export type MessageScalarWhereInput = {
   content?: Prisma.StringFilter<"Message"> | string
   conversationId?: Prisma.StringFilter<"Message"> | string
   senderId?: Prisma.StringFilter<"Message"> | string
-  isEdited?: Prisma.BoolFilter<"Message"> | boolean
-  isDeleted?: Prisma.BoolFilter<"Message"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Message"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Message"> | Date | string
+  isDeleted?: Prisma.BoolFilter<"Message"> | boolean
+  isEdited?: Prisma.BoolFilter<"Message"> | boolean
 }
 
 export type MessageCreateWithoutConversationInput = {
   id?: string
   content: string
-  isEdited?: boolean
-  isDeleted?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  isDeleted?: boolean
+  isEdited?: boolean
   sender: Prisma.UserCreateNestedOneWithoutMessagesInput
 }
 
@@ -543,10 +543,10 @@ export type MessageUncheckedCreateWithoutConversationInput = {
   id?: string
   content: string
   senderId: string
-  isEdited?: boolean
-  isDeleted?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  isDeleted?: boolean
+  isEdited?: boolean
 }
 
 export type MessageCreateOrConnectWithoutConversationInput = {
@@ -579,19 +579,19 @@ export type MessageCreateManySenderInput = {
   id?: string
   content: string
   conversationId: string
-  isEdited?: boolean
-  isDeleted?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  isDeleted?: boolean
+  isEdited?: boolean
 }
 
 export type MessageUpdateWithoutSenderInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
-  isEdited?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isDeleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isDeleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isEdited?: Prisma.BoolFieldUpdateOperationsInput | boolean
   conversation?: Prisma.ConversationUpdateOneRequiredWithoutMessagesNestedInput
 }
 
@@ -599,39 +599,39 @@ export type MessageUncheckedUpdateWithoutSenderInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
   conversationId?: Prisma.StringFieldUpdateOperationsInput | string
-  isEdited?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isDeleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isDeleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isEdited?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type MessageUncheckedUpdateManyWithoutSenderInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
   conversationId?: Prisma.StringFieldUpdateOperationsInput | string
-  isEdited?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isDeleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isDeleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isEdited?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type MessageCreateManyConversationInput = {
   id?: string
   content: string
   senderId: string
-  isEdited?: boolean
-  isDeleted?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  isDeleted?: boolean
+  isEdited?: boolean
 }
 
 export type MessageUpdateWithoutConversationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
-  isEdited?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isDeleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isDeleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isEdited?: Prisma.BoolFieldUpdateOperationsInput | boolean
   sender?: Prisma.UserUpdateOneRequiredWithoutMessagesNestedInput
 }
 
@@ -639,20 +639,20 @@ export type MessageUncheckedUpdateWithoutConversationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
   senderId?: Prisma.StringFieldUpdateOperationsInput | string
-  isEdited?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isDeleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isDeleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isEdited?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type MessageUncheckedUpdateManyWithoutConversationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
   senderId?: Prisma.StringFieldUpdateOperationsInput | string
-  isEdited?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isDeleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isDeleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isEdited?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 
@@ -662,10 +662,10 @@ export type MessageSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   content?: boolean
   conversationId?: boolean
   senderId?: boolean
-  isEdited?: boolean
-  isDeleted?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  isDeleted?: boolean
+  isEdited?: boolean
   conversation?: boolean | Prisma.ConversationDefaultArgs<ExtArgs>
   sender?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["message"]>
@@ -675,10 +675,10 @@ export type MessageSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   content?: boolean
   conversationId?: boolean
   senderId?: boolean
-  isEdited?: boolean
-  isDeleted?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  isDeleted?: boolean
+  isEdited?: boolean
   conversation?: boolean | Prisma.ConversationDefaultArgs<ExtArgs>
   sender?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["message"]>
@@ -688,10 +688,10 @@ export type MessageSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   content?: boolean
   conversationId?: boolean
   senderId?: boolean
-  isEdited?: boolean
-  isDeleted?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  isDeleted?: boolean
+  isEdited?: boolean
   conversation?: boolean | Prisma.ConversationDefaultArgs<ExtArgs>
   sender?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["message"]>
@@ -701,13 +701,13 @@ export type MessageSelectScalar = {
   content?: boolean
   conversationId?: boolean
   senderId?: boolean
-  isEdited?: boolean
-  isDeleted?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  isDeleted?: boolean
+  isEdited?: boolean
 }
 
-export type MessageOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "content" | "conversationId" | "senderId" | "isEdited" | "isDeleted" | "createdAt" | "updatedAt", ExtArgs["result"]["message"]>
+export type MessageOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "content" | "conversationId" | "senderId" | "createdAt" | "updatedAt" | "isDeleted" | "isEdited", ExtArgs["result"]["message"]>
 export type MessageInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   conversation?: boolean | Prisma.ConversationDefaultArgs<ExtArgs>
   sender?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -732,10 +732,10 @@ export type $MessagePayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     content: string
     conversationId: string
     senderId: string
-    isEdited: boolean
-    isDeleted: boolean
     createdAt: Date
     updatedAt: Date
+    isDeleted: boolean
+    isEdited: boolean
   }, ExtArgs["result"]["message"]>
   composites: {}
 }
@@ -1165,10 +1165,10 @@ export interface MessageFieldRefs {
   readonly content: Prisma.FieldRef<"Message", 'String'>
   readonly conversationId: Prisma.FieldRef<"Message", 'String'>
   readonly senderId: Prisma.FieldRef<"Message", 'String'>
-  readonly isEdited: Prisma.FieldRef<"Message", 'Boolean'>
-  readonly isDeleted: Prisma.FieldRef<"Message", 'Boolean'>
   readonly createdAt: Prisma.FieldRef<"Message", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Message", 'DateTime'>
+  readonly isDeleted: Prisma.FieldRef<"Message", 'Boolean'>
+  readonly isEdited: Prisma.FieldRef<"Message", 'Boolean'>
 }
     
 

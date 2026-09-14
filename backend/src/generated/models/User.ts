@@ -29,6 +29,7 @@ export type UserMinAggregateOutputType = {
   name: string | null
   email: string | null
   password: string | null
+  googleId: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -38,6 +39,7 @@ export type UserMaxAggregateOutputType = {
   name: string | null
   email: string | null
   password: string | null
+  googleId: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -47,6 +49,7 @@ export type UserCountAggregateOutputType = {
   name: number
   email: number
   password: number
+  googleId: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -58,6 +61,7 @@ export type UserMinAggregateInputType = {
   name?: true
   email?: true
   password?: true
+  googleId?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -67,6 +71,7 @@ export type UserMaxAggregateInputType = {
   name?: true
   email?: true
   password?: true
+  googleId?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -76,6 +81,7 @@ export type UserCountAggregateInputType = {
   name?: true
   email?: true
   password?: true
+  googleId?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -158,6 +164,7 @@ export type UserGroupByOutputType = {
   name: string
   email: string
   password: string
+  googleId: string | null
   createdAt: Date
   updatedAt: Date
   _count: UserCountAggregateOutputType | null
@@ -188,16 +195,17 @@ export type UserWhereInput = {
   name?: Prisma.StringFilter<"User"> | string
   email?: Prisma.StringFilter<"User"> | string
   password?: Prisma.StringFilter<"User"> | string
+  googleId?: Prisma.StringNullableFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
-  conversations?: Prisma.ConversationMemberListRelationFilter
-  messages?: Prisma.MessageListRelationFilter
   channels?: Prisma.ChannelMemberListRelationFilter
   channelMessages?: Prisma.ChannelMessageListRelationFilter
-  notifications?: Prisma.NotificationListRelationFilter
   channelNotificationSettings?: Prisma.ChannelNotificationSettingListRelationFilter
-  workspaces?: Prisma.WorkspaceListRelationFilter
+  conversations?: Prisma.ConversationMemberListRelationFilter
+  messages?: Prisma.MessageListRelationFilter
+  notifications?: Prisma.NotificationListRelationFilter
   supportTickets?: Prisma.SupportTicketListRelationFilter
+  workspaces?: Prisma.WorkspaceListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -205,21 +213,23 @@ export type UserOrderByWithRelationInput = {
   name?: Prisma.SortOrder
   email?: Prisma.SortOrder
   password?: Prisma.SortOrder
+  googleId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
-  conversations?: Prisma.ConversationMemberOrderByRelationAggregateInput
-  messages?: Prisma.MessageOrderByRelationAggregateInput
   channels?: Prisma.ChannelMemberOrderByRelationAggregateInput
   channelMessages?: Prisma.ChannelMessageOrderByRelationAggregateInput
-  notifications?: Prisma.NotificationOrderByRelationAggregateInput
   channelNotificationSettings?: Prisma.ChannelNotificationSettingOrderByRelationAggregateInput
-  workspaces?: Prisma.WorkspaceOrderByRelationAggregateInput
+  conversations?: Prisma.ConversationMemberOrderByRelationAggregateInput
+  messages?: Prisma.MessageOrderByRelationAggregateInput
+  notifications?: Prisma.NotificationOrderByRelationAggregateInput
   supportTickets?: Prisma.SupportTicketOrderByRelationAggregateInput
+  workspaces?: Prisma.WorkspaceOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
   id?: string
   email?: string
+  googleId?: string
   AND?: Prisma.UserWhereInput | Prisma.UserWhereInput[]
   OR?: Prisma.UserWhereInput[]
   NOT?: Prisma.UserWhereInput | Prisma.UserWhereInput[]
@@ -227,21 +237,22 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   password?: Prisma.StringFilter<"User"> | string
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
-  conversations?: Prisma.ConversationMemberListRelationFilter
-  messages?: Prisma.MessageListRelationFilter
   channels?: Prisma.ChannelMemberListRelationFilter
   channelMessages?: Prisma.ChannelMessageListRelationFilter
-  notifications?: Prisma.NotificationListRelationFilter
   channelNotificationSettings?: Prisma.ChannelNotificationSettingListRelationFilter
-  workspaces?: Prisma.WorkspaceListRelationFilter
+  conversations?: Prisma.ConversationMemberListRelationFilter
+  messages?: Prisma.MessageListRelationFilter
+  notifications?: Prisma.NotificationListRelationFilter
   supportTickets?: Prisma.SupportTicketListRelationFilter
-}, "id" | "email">
+  workspaces?: Prisma.WorkspaceListRelationFilter
+}, "id" | "email" | "googleId">
 
 export type UserOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   email?: Prisma.SortOrder
   password?: Prisma.SortOrder
+  googleId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.UserCountOrderByAggregateInput
@@ -257,6 +268,7 @@ export type UserScalarWhereWithAggregatesInput = {
   name?: Prisma.StringWithAggregatesFilter<"User"> | string
   email?: Prisma.StringWithAggregatesFilter<"User"> | string
   password?: Prisma.StringWithAggregatesFilter<"User"> | string
+  googleId?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
 }
@@ -266,16 +278,17 @@ export type UserCreateInput = {
   name: string
   email: string
   password: string
+  googleId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  conversations?: Prisma.ConversationMemberCreateNestedManyWithoutUserInput
-  messages?: Prisma.MessageCreateNestedManyWithoutSenderInput
   channels?: Prisma.ChannelMemberCreateNestedManyWithoutUserInput
   channelMessages?: Prisma.ChannelMessageCreateNestedManyWithoutSenderInput
-  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   channelNotificationSettings?: Prisma.ChannelNotificationSettingCreateNestedManyWithoutUserInput
-  workspaces?: Prisma.WorkspaceCreateNestedManyWithoutOwnerInput
+  conversations?: Prisma.ConversationMemberCreateNestedManyWithoutUserInput
+  messages?: Prisma.MessageCreateNestedManyWithoutSenderInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
+  workspaces?: Prisma.WorkspaceCreateNestedManyWithoutOwnerInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -283,16 +296,17 @@ export type UserUncheckedCreateInput = {
   name: string
   email: string
   password: string
+  googleId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  conversations?: Prisma.ConversationMemberUncheckedCreateNestedManyWithoutUserInput
-  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
   channels?: Prisma.ChannelMemberUncheckedCreateNestedManyWithoutUserInput
   channelMessages?: Prisma.ChannelMessageUncheckedCreateNestedManyWithoutSenderInput
-  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   channelNotificationSettings?: Prisma.ChannelNotificationSettingUncheckedCreateNestedManyWithoutUserInput
-  workspaces?: Prisma.WorkspaceUncheckedCreateNestedManyWithoutOwnerInput
+  conversations?: Prisma.ConversationMemberUncheckedCreateNestedManyWithoutUserInput
+  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
+  workspaces?: Prisma.WorkspaceUncheckedCreateNestedManyWithoutOwnerInput
 }
 
 export type UserUpdateInput = {
@@ -300,16 +314,17 @@ export type UserUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  conversations?: Prisma.ConversationMemberUpdateManyWithoutUserNestedInput
-  messages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
   channels?: Prisma.ChannelMemberUpdateManyWithoutUserNestedInput
   channelMessages?: Prisma.ChannelMessageUpdateManyWithoutSenderNestedInput
-  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   channelNotificationSettings?: Prisma.ChannelNotificationSettingUpdateManyWithoutUserNestedInput
-  workspaces?: Prisma.WorkspaceUpdateManyWithoutOwnerNestedInput
+  conversations?: Prisma.ConversationMemberUpdateManyWithoutUserNestedInput
+  messages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
+  workspaces?: Prisma.WorkspaceUpdateManyWithoutOwnerNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -317,16 +332,17 @@ export type UserUncheckedUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  conversations?: Prisma.ConversationMemberUncheckedUpdateManyWithoutUserNestedInput
-  messages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
   channels?: Prisma.ChannelMemberUncheckedUpdateManyWithoutUserNestedInput
   channelMessages?: Prisma.ChannelMessageUncheckedUpdateManyWithoutSenderNestedInput
-  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   channelNotificationSettings?: Prisma.ChannelNotificationSettingUncheckedUpdateManyWithoutUserNestedInput
-  workspaces?: Prisma.WorkspaceUncheckedUpdateManyWithoutOwnerNestedInput
+  conversations?: Prisma.ConversationMemberUncheckedUpdateManyWithoutUserNestedInput
+  messages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
+  workspaces?: Prisma.WorkspaceUncheckedUpdateManyWithoutOwnerNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -334,6 +350,7 @@ export type UserCreateManyInput = {
   name: string
   email: string
   password: string
+  googleId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -343,6 +360,7 @@ export type UserUpdateManyMutationInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -352,6 +370,7 @@ export type UserUncheckedUpdateManyInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -361,6 +380,7 @@ export type UserCountOrderByAggregateInput = {
   name?: Prisma.SortOrder
   email?: Prisma.SortOrder
   password?: Prisma.SortOrder
+  googleId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -370,6 +390,7 @@ export type UserMaxOrderByAggregateInput = {
   name?: Prisma.SortOrder
   email?: Prisma.SortOrder
   password?: Prisma.SortOrder
+  googleId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -379,6 +400,7 @@ export type UserMinOrderByAggregateInput = {
   name?: Prisma.SortOrder
   email?: Prisma.SortOrder
   password?: Prisma.SortOrder
+  googleId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -390,6 +412,10 @@ export type UserScalarRelationFilter = {
 
 export type StringFieldUpdateOperationsInput = {
   set?: string
+}
+
+export type NullableStringFieldUpdateOperationsInput = {
+  set?: string | null
 }
 
 export type DateTimeFieldUpdateOperationsInput = {
@@ -513,14 +539,15 @@ export type UserCreateWithoutWorkspacesInput = {
   name: string
   email: string
   password: string
+  googleId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  conversations?: Prisma.ConversationMemberCreateNestedManyWithoutUserInput
-  messages?: Prisma.MessageCreateNestedManyWithoutSenderInput
   channels?: Prisma.ChannelMemberCreateNestedManyWithoutUserInput
   channelMessages?: Prisma.ChannelMessageCreateNestedManyWithoutSenderInput
-  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   channelNotificationSettings?: Prisma.ChannelNotificationSettingCreateNestedManyWithoutUserInput
+  conversations?: Prisma.ConversationMemberCreateNestedManyWithoutUserInput
+  messages?: Prisma.MessageCreateNestedManyWithoutSenderInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
 }
 
@@ -529,14 +556,15 @@ export type UserUncheckedCreateWithoutWorkspacesInput = {
   name: string
   email: string
   password: string
+  googleId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  conversations?: Prisma.ConversationMemberUncheckedCreateNestedManyWithoutUserInput
-  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
   channels?: Prisma.ChannelMemberUncheckedCreateNestedManyWithoutUserInput
   channelMessages?: Prisma.ChannelMessageUncheckedCreateNestedManyWithoutSenderInput
-  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   channelNotificationSettings?: Prisma.ChannelNotificationSettingUncheckedCreateNestedManyWithoutUserInput
+  conversations?: Prisma.ConversationMemberUncheckedCreateNestedManyWithoutUserInput
+  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
 }
 
@@ -561,14 +589,15 @@ export type UserUpdateWithoutWorkspacesInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  conversations?: Prisma.ConversationMemberUpdateManyWithoutUserNestedInput
-  messages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
   channels?: Prisma.ChannelMemberUpdateManyWithoutUserNestedInput
   channelMessages?: Prisma.ChannelMessageUpdateManyWithoutSenderNestedInput
-  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   channelNotificationSettings?: Prisma.ChannelNotificationSettingUpdateManyWithoutUserNestedInput
+  conversations?: Prisma.ConversationMemberUpdateManyWithoutUserNestedInput
+  messages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
 }
 
@@ -577,14 +606,15 @@ export type UserUncheckedUpdateWithoutWorkspacesInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  conversations?: Prisma.ConversationMemberUncheckedUpdateManyWithoutUserNestedInput
-  messages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
   channels?: Prisma.ChannelMemberUncheckedUpdateManyWithoutUserNestedInput
   channelMessages?: Prisma.ChannelMessageUncheckedUpdateManyWithoutSenderNestedInput
-  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   channelNotificationSettings?: Prisma.ChannelNotificationSettingUncheckedUpdateManyWithoutUserNestedInput
+  conversations?: Prisma.ConversationMemberUncheckedUpdateManyWithoutUserNestedInput
+  messages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
 }
 
@@ -593,14 +623,15 @@ export type UserCreateWithoutSupportTicketsInput = {
   name: string
   email: string
   password: string
+  googleId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  conversations?: Prisma.ConversationMemberCreateNestedManyWithoutUserInput
-  messages?: Prisma.MessageCreateNestedManyWithoutSenderInput
   channels?: Prisma.ChannelMemberCreateNestedManyWithoutUserInput
   channelMessages?: Prisma.ChannelMessageCreateNestedManyWithoutSenderInput
-  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   channelNotificationSettings?: Prisma.ChannelNotificationSettingCreateNestedManyWithoutUserInput
+  conversations?: Prisma.ConversationMemberCreateNestedManyWithoutUserInput
+  messages?: Prisma.MessageCreateNestedManyWithoutSenderInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   workspaces?: Prisma.WorkspaceCreateNestedManyWithoutOwnerInput
 }
 
@@ -609,14 +640,15 @@ export type UserUncheckedCreateWithoutSupportTicketsInput = {
   name: string
   email: string
   password: string
+  googleId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  conversations?: Prisma.ConversationMemberUncheckedCreateNestedManyWithoutUserInput
-  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
   channels?: Prisma.ChannelMemberUncheckedCreateNestedManyWithoutUserInput
   channelMessages?: Prisma.ChannelMessageUncheckedCreateNestedManyWithoutSenderInput
-  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   channelNotificationSettings?: Prisma.ChannelNotificationSettingUncheckedCreateNestedManyWithoutUserInput
+  conversations?: Prisma.ConversationMemberUncheckedCreateNestedManyWithoutUserInput
+  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   workspaces?: Prisma.WorkspaceUncheckedCreateNestedManyWithoutOwnerInput
 }
 
@@ -641,14 +673,15 @@ export type UserUpdateWithoutSupportTicketsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  conversations?: Prisma.ConversationMemberUpdateManyWithoutUserNestedInput
-  messages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
   channels?: Prisma.ChannelMemberUpdateManyWithoutUserNestedInput
   channelMessages?: Prisma.ChannelMessageUpdateManyWithoutSenderNestedInput
-  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   channelNotificationSettings?: Prisma.ChannelNotificationSettingUpdateManyWithoutUserNestedInput
+  conversations?: Prisma.ConversationMemberUpdateManyWithoutUserNestedInput
+  messages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   workspaces?: Prisma.WorkspaceUpdateManyWithoutOwnerNestedInput
 }
 
@@ -657,14 +690,15 @@ export type UserUncheckedUpdateWithoutSupportTicketsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  conversations?: Prisma.ConversationMemberUncheckedUpdateManyWithoutUserNestedInput
-  messages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
   channels?: Prisma.ChannelMemberUncheckedUpdateManyWithoutUserNestedInput
   channelMessages?: Prisma.ChannelMessageUncheckedUpdateManyWithoutSenderNestedInput
-  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   channelNotificationSettings?: Prisma.ChannelNotificationSettingUncheckedUpdateManyWithoutUserNestedInput
+  conversations?: Prisma.ConversationMemberUncheckedUpdateManyWithoutUserNestedInput
+  messages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   workspaces?: Prisma.WorkspaceUncheckedUpdateManyWithoutOwnerNestedInput
 }
 
@@ -673,15 +707,16 @@ export type UserCreateWithoutConversationsInput = {
   name: string
   email: string
   password: string
+  googleId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  messages?: Prisma.MessageCreateNestedManyWithoutSenderInput
   channels?: Prisma.ChannelMemberCreateNestedManyWithoutUserInput
   channelMessages?: Prisma.ChannelMessageCreateNestedManyWithoutSenderInput
-  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   channelNotificationSettings?: Prisma.ChannelNotificationSettingCreateNestedManyWithoutUserInput
-  workspaces?: Prisma.WorkspaceCreateNestedManyWithoutOwnerInput
+  messages?: Prisma.MessageCreateNestedManyWithoutSenderInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
+  workspaces?: Prisma.WorkspaceCreateNestedManyWithoutOwnerInput
 }
 
 export type UserUncheckedCreateWithoutConversationsInput = {
@@ -689,15 +724,16 @@ export type UserUncheckedCreateWithoutConversationsInput = {
   name: string
   email: string
   password: string
+  googleId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
   channels?: Prisma.ChannelMemberUncheckedCreateNestedManyWithoutUserInput
   channelMessages?: Prisma.ChannelMessageUncheckedCreateNestedManyWithoutSenderInput
-  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   channelNotificationSettings?: Prisma.ChannelNotificationSettingUncheckedCreateNestedManyWithoutUserInput
-  workspaces?: Prisma.WorkspaceUncheckedCreateNestedManyWithoutOwnerInput
+  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
+  workspaces?: Prisma.WorkspaceUncheckedCreateNestedManyWithoutOwnerInput
 }
 
 export type UserCreateOrConnectWithoutConversationsInput = {
@@ -721,15 +757,16 @@ export type UserUpdateWithoutConversationsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  messages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
   channels?: Prisma.ChannelMemberUpdateManyWithoutUserNestedInput
   channelMessages?: Prisma.ChannelMessageUpdateManyWithoutSenderNestedInput
-  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   channelNotificationSettings?: Prisma.ChannelNotificationSettingUpdateManyWithoutUserNestedInput
-  workspaces?: Prisma.WorkspaceUpdateManyWithoutOwnerNestedInput
+  messages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
+  workspaces?: Prisma.WorkspaceUpdateManyWithoutOwnerNestedInput
 }
 
 export type UserUncheckedUpdateWithoutConversationsInput = {
@@ -737,15 +774,16 @@ export type UserUncheckedUpdateWithoutConversationsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  messages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
   channels?: Prisma.ChannelMemberUncheckedUpdateManyWithoutUserNestedInput
   channelMessages?: Prisma.ChannelMessageUncheckedUpdateManyWithoutSenderNestedInput
-  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   channelNotificationSettings?: Prisma.ChannelNotificationSettingUncheckedUpdateManyWithoutUserNestedInput
-  workspaces?: Prisma.WorkspaceUncheckedUpdateManyWithoutOwnerNestedInput
+  messages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
+  workspaces?: Prisma.WorkspaceUncheckedUpdateManyWithoutOwnerNestedInput
 }
 
 export type UserCreateWithoutMessagesInput = {
@@ -753,15 +791,16 @@ export type UserCreateWithoutMessagesInput = {
   name: string
   email: string
   password: string
+  googleId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  conversations?: Prisma.ConversationMemberCreateNestedManyWithoutUserInput
   channels?: Prisma.ChannelMemberCreateNestedManyWithoutUserInput
   channelMessages?: Prisma.ChannelMessageCreateNestedManyWithoutSenderInput
-  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   channelNotificationSettings?: Prisma.ChannelNotificationSettingCreateNestedManyWithoutUserInput
-  workspaces?: Prisma.WorkspaceCreateNestedManyWithoutOwnerInput
+  conversations?: Prisma.ConversationMemberCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
+  workspaces?: Prisma.WorkspaceCreateNestedManyWithoutOwnerInput
 }
 
 export type UserUncheckedCreateWithoutMessagesInput = {
@@ -769,15 +808,16 @@ export type UserUncheckedCreateWithoutMessagesInput = {
   name: string
   email: string
   password: string
+  googleId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  conversations?: Prisma.ConversationMemberUncheckedCreateNestedManyWithoutUserInput
   channels?: Prisma.ChannelMemberUncheckedCreateNestedManyWithoutUserInput
   channelMessages?: Prisma.ChannelMessageUncheckedCreateNestedManyWithoutSenderInput
-  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   channelNotificationSettings?: Prisma.ChannelNotificationSettingUncheckedCreateNestedManyWithoutUserInput
-  workspaces?: Prisma.WorkspaceUncheckedCreateNestedManyWithoutOwnerInput
+  conversations?: Prisma.ConversationMemberUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
+  workspaces?: Prisma.WorkspaceUncheckedCreateNestedManyWithoutOwnerInput
 }
 
 export type UserCreateOrConnectWithoutMessagesInput = {
@@ -801,15 +841,16 @@ export type UserUpdateWithoutMessagesInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  conversations?: Prisma.ConversationMemberUpdateManyWithoutUserNestedInput
   channels?: Prisma.ChannelMemberUpdateManyWithoutUserNestedInput
   channelMessages?: Prisma.ChannelMessageUpdateManyWithoutSenderNestedInput
-  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   channelNotificationSettings?: Prisma.ChannelNotificationSettingUpdateManyWithoutUserNestedInput
-  workspaces?: Prisma.WorkspaceUpdateManyWithoutOwnerNestedInput
+  conversations?: Prisma.ConversationMemberUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
+  workspaces?: Prisma.WorkspaceUpdateManyWithoutOwnerNestedInput
 }
 
 export type UserUncheckedUpdateWithoutMessagesInput = {
@@ -817,15 +858,16 @@ export type UserUncheckedUpdateWithoutMessagesInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  conversations?: Prisma.ConversationMemberUncheckedUpdateManyWithoutUserNestedInput
   channels?: Prisma.ChannelMemberUncheckedUpdateManyWithoutUserNestedInput
   channelMessages?: Prisma.ChannelMessageUncheckedUpdateManyWithoutSenderNestedInput
-  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   channelNotificationSettings?: Prisma.ChannelNotificationSettingUncheckedUpdateManyWithoutUserNestedInput
-  workspaces?: Prisma.WorkspaceUncheckedUpdateManyWithoutOwnerNestedInput
+  conversations?: Prisma.ConversationMemberUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
+  workspaces?: Prisma.WorkspaceUncheckedUpdateManyWithoutOwnerNestedInput
 }
 
 export type UserCreateWithoutChannelsInput = {
@@ -833,15 +875,16 @@ export type UserCreateWithoutChannelsInput = {
   name: string
   email: string
   password: string
+  googleId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  channelMessages?: Prisma.ChannelMessageCreateNestedManyWithoutSenderInput
+  channelNotificationSettings?: Prisma.ChannelNotificationSettingCreateNestedManyWithoutUserInput
   conversations?: Prisma.ConversationMemberCreateNestedManyWithoutUserInput
   messages?: Prisma.MessageCreateNestedManyWithoutSenderInput
-  channelMessages?: Prisma.ChannelMessageCreateNestedManyWithoutSenderInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
-  channelNotificationSettings?: Prisma.ChannelNotificationSettingCreateNestedManyWithoutUserInput
-  workspaces?: Prisma.WorkspaceCreateNestedManyWithoutOwnerInput
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
+  workspaces?: Prisma.WorkspaceCreateNestedManyWithoutOwnerInput
 }
 
 export type UserUncheckedCreateWithoutChannelsInput = {
@@ -849,15 +892,16 @@ export type UserUncheckedCreateWithoutChannelsInput = {
   name: string
   email: string
   password: string
+  googleId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  channelMessages?: Prisma.ChannelMessageUncheckedCreateNestedManyWithoutSenderInput
+  channelNotificationSettings?: Prisma.ChannelNotificationSettingUncheckedCreateNestedManyWithoutUserInput
   conversations?: Prisma.ConversationMemberUncheckedCreateNestedManyWithoutUserInput
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
-  channelMessages?: Prisma.ChannelMessageUncheckedCreateNestedManyWithoutSenderInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
-  channelNotificationSettings?: Prisma.ChannelNotificationSettingUncheckedCreateNestedManyWithoutUserInput
-  workspaces?: Prisma.WorkspaceUncheckedCreateNestedManyWithoutOwnerInput
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
+  workspaces?: Prisma.WorkspaceUncheckedCreateNestedManyWithoutOwnerInput
 }
 
 export type UserCreateOrConnectWithoutChannelsInput = {
@@ -881,15 +925,16 @@ export type UserUpdateWithoutChannelsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  channelMessages?: Prisma.ChannelMessageUpdateManyWithoutSenderNestedInput
+  channelNotificationSettings?: Prisma.ChannelNotificationSettingUpdateManyWithoutUserNestedInput
   conversations?: Prisma.ConversationMemberUpdateManyWithoutUserNestedInput
   messages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
-  channelMessages?: Prisma.ChannelMessageUpdateManyWithoutSenderNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
-  channelNotificationSettings?: Prisma.ChannelNotificationSettingUpdateManyWithoutUserNestedInput
-  workspaces?: Prisma.WorkspaceUpdateManyWithoutOwnerNestedInput
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
+  workspaces?: Prisma.WorkspaceUpdateManyWithoutOwnerNestedInput
 }
 
 export type UserUncheckedUpdateWithoutChannelsInput = {
@@ -897,15 +942,16 @@ export type UserUncheckedUpdateWithoutChannelsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  channelMessages?: Prisma.ChannelMessageUncheckedUpdateManyWithoutSenderNestedInput
+  channelNotificationSettings?: Prisma.ChannelNotificationSettingUncheckedUpdateManyWithoutUserNestedInput
   conversations?: Prisma.ConversationMemberUncheckedUpdateManyWithoutUserNestedInput
   messages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
-  channelMessages?: Prisma.ChannelMessageUncheckedUpdateManyWithoutSenderNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
-  channelNotificationSettings?: Prisma.ChannelNotificationSettingUncheckedUpdateManyWithoutUserNestedInput
-  workspaces?: Prisma.WorkspaceUncheckedUpdateManyWithoutOwnerNestedInput
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
+  workspaces?: Prisma.WorkspaceUncheckedUpdateManyWithoutOwnerNestedInput
 }
 
 export type UserCreateWithoutChannelMessagesInput = {
@@ -913,15 +959,16 @@ export type UserCreateWithoutChannelMessagesInput = {
   name: string
   email: string
   password: string
+  googleId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  channels?: Prisma.ChannelMemberCreateNestedManyWithoutUserInput
+  channelNotificationSettings?: Prisma.ChannelNotificationSettingCreateNestedManyWithoutUserInput
   conversations?: Prisma.ConversationMemberCreateNestedManyWithoutUserInput
   messages?: Prisma.MessageCreateNestedManyWithoutSenderInput
-  channels?: Prisma.ChannelMemberCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
-  channelNotificationSettings?: Prisma.ChannelNotificationSettingCreateNestedManyWithoutUserInput
-  workspaces?: Prisma.WorkspaceCreateNestedManyWithoutOwnerInput
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
+  workspaces?: Prisma.WorkspaceCreateNestedManyWithoutOwnerInput
 }
 
 export type UserUncheckedCreateWithoutChannelMessagesInput = {
@@ -929,15 +976,16 @@ export type UserUncheckedCreateWithoutChannelMessagesInput = {
   name: string
   email: string
   password: string
+  googleId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  channels?: Prisma.ChannelMemberUncheckedCreateNestedManyWithoutUserInput
+  channelNotificationSettings?: Prisma.ChannelNotificationSettingUncheckedCreateNestedManyWithoutUserInput
   conversations?: Prisma.ConversationMemberUncheckedCreateNestedManyWithoutUserInput
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
-  channels?: Prisma.ChannelMemberUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
-  channelNotificationSettings?: Prisma.ChannelNotificationSettingUncheckedCreateNestedManyWithoutUserInput
-  workspaces?: Prisma.WorkspaceUncheckedCreateNestedManyWithoutOwnerInput
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
+  workspaces?: Prisma.WorkspaceUncheckedCreateNestedManyWithoutOwnerInput
 }
 
 export type UserCreateOrConnectWithoutChannelMessagesInput = {
@@ -961,15 +1009,16 @@ export type UserUpdateWithoutChannelMessagesInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  channels?: Prisma.ChannelMemberUpdateManyWithoutUserNestedInput
+  channelNotificationSettings?: Prisma.ChannelNotificationSettingUpdateManyWithoutUserNestedInput
   conversations?: Prisma.ConversationMemberUpdateManyWithoutUserNestedInput
   messages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
-  channels?: Prisma.ChannelMemberUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
-  channelNotificationSettings?: Prisma.ChannelNotificationSettingUpdateManyWithoutUserNestedInput
-  workspaces?: Prisma.WorkspaceUpdateManyWithoutOwnerNestedInput
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
+  workspaces?: Prisma.WorkspaceUpdateManyWithoutOwnerNestedInput
 }
 
 export type UserUncheckedUpdateWithoutChannelMessagesInput = {
@@ -977,15 +1026,16 @@ export type UserUncheckedUpdateWithoutChannelMessagesInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  channels?: Prisma.ChannelMemberUncheckedUpdateManyWithoutUserNestedInput
+  channelNotificationSettings?: Prisma.ChannelNotificationSettingUncheckedUpdateManyWithoutUserNestedInput
   conversations?: Prisma.ConversationMemberUncheckedUpdateManyWithoutUserNestedInput
   messages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
-  channels?: Prisma.ChannelMemberUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
-  channelNotificationSettings?: Prisma.ChannelNotificationSettingUncheckedUpdateManyWithoutUserNestedInput
-  workspaces?: Prisma.WorkspaceUncheckedUpdateManyWithoutOwnerNestedInput
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
+  workspaces?: Prisma.WorkspaceUncheckedUpdateManyWithoutOwnerNestedInput
 }
 
 export type UserCreateWithoutNotificationsInput = {
@@ -993,15 +1043,16 @@ export type UserCreateWithoutNotificationsInput = {
   name: string
   email: string
   password: string
+  googleId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  conversations?: Prisma.ConversationMemberCreateNestedManyWithoutUserInput
-  messages?: Prisma.MessageCreateNestedManyWithoutSenderInput
   channels?: Prisma.ChannelMemberCreateNestedManyWithoutUserInput
   channelMessages?: Prisma.ChannelMessageCreateNestedManyWithoutSenderInput
   channelNotificationSettings?: Prisma.ChannelNotificationSettingCreateNestedManyWithoutUserInput
-  workspaces?: Prisma.WorkspaceCreateNestedManyWithoutOwnerInput
+  conversations?: Prisma.ConversationMemberCreateNestedManyWithoutUserInput
+  messages?: Prisma.MessageCreateNestedManyWithoutSenderInput
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
+  workspaces?: Prisma.WorkspaceCreateNestedManyWithoutOwnerInput
 }
 
 export type UserUncheckedCreateWithoutNotificationsInput = {
@@ -1009,15 +1060,16 @@ export type UserUncheckedCreateWithoutNotificationsInput = {
   name: string
   email: string
   password: string
+  googleId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  conversations?: Prisma.ConversationMemberUncheckedCreateNestedManyWithoutUserInput
-  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
   channels?: Prisma.ChannelMemberUncheckedCreateNestedManyWithoutUserInput
   channelMessages?: Prisma.ChannelMessageUncheckedCreateNestedManyWithoutSenderInput
   channelNotificationSettings?: Prisma.ChannelNotificationSettingUncheckedCreateNestedManyWithoutUserInput
-  workspaces?: Prisma.WorkspaceUncheckedCreateNestedManyWithoutOwnerInput
+  conversations?: Prisma.ConversationMemberUncheckedCreateNestedManyWithoutUserInput
+  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
+  workspaces?: Prisma.WorkspaceUncheckedCreateNestedManyWithoutOwnerInput
 }
 
 export type UserCreateOrConnectWithoutNotificationsInput = {
@@ -1041,15 +1093,16 @@ export type UserUpdateWithoutNotificationsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  conversations?: Prisma.ConversationMemberUpdateManyWithoutUserNestedInput
-  messages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
   channels?: Prisma.ChannelMemberUpdateManyWithoutUserNestedInput
   channelMessages?: Prisma.ChannelMessageUpdateManyWithoutSenderNestedInput
   channelNotificationSettings?: Prisma.ChannelNotificationSettingUpdateManyWithoutUserNestedInput
-  workspaces?: Prisma.WorkspaceUpdateManyWithoutOwnerNestedInput
+  conversations?: Prisma.ConversationMemberUpdateManyWithoutUserNestedInput
+  messages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
+  workspaces?: Prisma.WorkspaceUpdateManyWithoutOwnerNestedInput
 }
 
 export type UserUncheckedUpdateWithoutNotificationsInput = {
@@ -1057,15 +1110,16 @@ export type UserUncheckedUpdateWithoutNotificationsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  conversations?: Prisma.ConversationMemberUncheckedUpdateManyWithoutUserNestedInput
-  messages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
   channels?: Prisma.ChannelMemberUncheckedUpdateManyWithoutUserNestedInput
   channelMessages?: Prisma.ChannelMessageUncheckedUpdateManyWithoutSenderNestedInput
   channelNotificationSettings?: Prisma.ChannelNotificationSettingUncheckedUpdateManyWithoutUserNestedInput
-  workspaces?: Prisma.WorkspaceUncheckedUpdateManyWithoutOwnerNestedInput
+  conversations?: Prisma.ConversationMemberUncheckedUpdateManyWithoutUserNestedInput
+  messages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
+  workspaces?: Prisma.WorkspaceUncheckedUpdateManyWithoutOwnerNestedInput
 }
 
 export type UserCreateWithoutChannelNotificationSettingsInput = {
@@ -1073,15 +1127,16 @@ export type UserCreateWithoutChannelNotificationSettingsInput = {
   name: string
   email: string
   password: string
+  googleId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  conversations?: Prisma.ConversationMemberCreateNestedManyWithoutUserInput
-  messages?: Prisma.MessageCreateNestedManyWithoutSenderInput
   channels?: Prisma.ChannelMemberCreateNestedManyWithoutUserInput
   channelMessages?: Prisma.ChannelMessageCreateNestedManyWithoutSenderInput
+  conversations?: Prisma.ConversationMemberCreateNestedManyWithoutUserInput
+  messages?: Prisma.MessageCreateNestedManyWithoutSenderInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
-  workspaces?: Prisma.WorkspaceCreateNestedManyWithoutOwnerInput
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
+  workspaces?: Prisma.WorkspaceCreateNestedManyWithoutOwnerInput
 }
 
 export type UserUncheckedCreateWithoutChannelNotificationSettingsInput = {
@@ -1089,15 +1144,16 @@ export type UserUncheckedCreateWithoutChannelNotificationSettingsInput = {
   name: string
   email: string
   password: string
+  googleId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  conversations?: Prisma.ConversationMemberUncheckedCreateNestedManyWithoutUserInput
-  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
   channels?: Prisma.ChannelMemberUncheckedCreateNestedManyWithoutUserInput
   channelMessages?: Prisma.ChannelMessageUncheckedCreateNestedManyWithoutSenderInput
+  conversations?: Prisma.ConversationMemberUncheckedCreateNestedManyWithoutUserInput
+  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
-  workspaces?: Prisma.WorkspaceUncheckedCreateNestedManyWithoutOwnerInput
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
+  workspaces?: Prisma.WorkspaceUncheckedCreateNestedManyWithoutOwnerInput
 }
 
 export type UserCreateOrConnectWithoutChannelNotificationSettingsInput = {
@@ -1121,15 +1177,16 @@ export type UserUpdateWithoutChannelNotificationSettingsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  conversations?: Prisma.ConversationMemberUpdateManyWithoutUserNestedInput
-  messages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
   channels?: Prisma.ChannelMemberUpdateManyWithoutUserNestedInput
   channelMessages?: Prisma.ChannelMessageUpdateManyWithoutSenderNestedInput
+  conversations?: Prisma.ConversationMemberUpdateManyWithoutUserNestedInput
+  messages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
-  workspaces?: Prisma.WorkspaceUpdateManyWithoutOwnerNestedInput
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
+  workspaces?: Prisma.WorkspaceUpdateManyWithoutOwnerNestedInput
 }
 
 export type UserUncheckedUpdateWithoutChannelNotificationSettingsInput = {
@@ -1137,15 +1194,16 @@ export type UserUncheckedUpdateWithoutChannelNotificationSettingsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  conversations?: Prisma.ConversationMemberUncheckedUpdateManyWithoutUserNestedInput
-  messages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
   channels?: Prisma.ChannelMemberUncheckedUpdateManyWithoutUserNestedInput
   channelMessages?: Prisma.ChannelMessageUncheckedUpdateManyWithoutSenderNestedInput
+  conversations?: Prisma.ConversationMemberUncheckedUpdateManyWithoutUserNestedInput
+  messages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
-  workspaces?: Prisma.WorkspaceUncheckedUpdateManyWithoutOwnerNestedInput
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
+  workspaces?: Prisma.WorkspaceUncheckedUpdateManyWithoutOwnerNestedInput
 }
 
 
@@ -1154,25 +1212,25 @@ export type UserUncheckedUpdateWithoutChannelNotificationSettingsInput = {
  */
 
 export type UserCountOutputType = {
-  conversations: number
-  messages: number
   channels: number
   channelMessages: number
-  notifications: number
   channelNotificationSettings: number
-  workspaces: number
+  conversations: number
+  messages: number
+  notifications: number
   supportTickets: number
+  workspaces: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  conversations?: boolean | UserCountOutputTypeCountConversationsArgs
-  messages?: boolean | UserCountOutputTypeCountMessagesArgs
   channels?: boolean | UserCountOutputTypeCountChannelsArgs
   channelMessages?: boolean | UserCountOutputTypeCountChannelMessagesArgs
-  notifications?: boolean | UserCountOutputTypeCountNotificationsArgs
   channelNotificationSettings?: boolean | UserCountOutputTypeCountChannelNotificationSettingsArgs
-  workspaces?: boolean | UserCountOutputTypeCountWorkspacesArgs
+  conversations?: boolean | UserCountOutputTypeCountConversationsArgs
+  messages?: boolean | UserCountOutputTypeCountMessagesArgs
+  notifications?: boolean | UserCountOutputTypeCountNotificationsArgs
   supportTickets?: boolean | UserCountOutputTypeCountSupportTicketsArgs
+  workspaces?: boolean | UserCountOutputTypeCountWorkspacesArgs
 }
 
 /**
@@ -1183,20 +1241,6 @@ export type UserCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensi
    * Select specific fields to fetch from the UserCountOutputType
    */
   select?: Prisma.UserCountOutputTypeSelect<ExtArgs> | null
-}
-
-/**
- * UserCountOutputType without action
- */
-export type UserCountOutputTypeCountConversationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.ConversationMemberWhereInput
-}
-
-/**
- * UserCountOutputType without action
- */
-export type UserCountOutputTypeCountMessagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.MessageWhereInput
 }
 
 /**
@@ -1216,13 +1260,6 @@ export type UserCountOutputTypeCountChannelMessagesArgs<ExtArgs extends runtime.
 /**
  * UserCountOutputType without action
  */
-export type UserCountOutputTypeCountNotificationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.NotificationWhereInput
-}
-
-/**
- * UserCountOutputType without action
- */
 export type UserCountOutputTypeCountChannelNotificationSettingsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.ChannelNotificationSettingWhereInput
 }
@@ -1230,8 +1267,22 @@ export type UserCountOutputTypeCountChannelNotificationSettingsArgs<ExtArgs exte
 /**
  * UserCountOutputType without action
  */
-export type UserCountOutputTypeCountWorkspacesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.WorkspaceWhereInput
+export type UserCountOutputTypeCountConversationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ConversationMemberWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountMessagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.MessageWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountNotificationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.NotificationWhereInput
 }
 
 /**
@@ -1241,22 +1292,30 @@ export type UserCountOutputTypeCountSupportTicketsArgs<ExtArgs extends runtime.T
   where?: Prisma.SupportTicketWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountWorkspacesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.WorkspaceWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   name?: boolean
   email?: boolean
   password?: boolean
+  googleId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  conversations?: boolean | Prisma.User$conversationsArgs<ExtArgs>
-  messages?: boolean | Prisma.User$messagesArgs<ExtArgs>
   channels?: boolean | Prisma.User$channelsArgs<ExtArgs>
   channelMessages?: boolean | Prisma.User$channelMessagesArgs<ExtArgs>
-  notifications?: boolean | Prisma.User$notificationsArgs<ExtArgs>
   channelNotificationSettings?: boolean | Prisma.User$channelNotificationSettingsArgs<ExtArgs>
-  workspaces?: boolean | Prisma.User$workspacesArgs<ExtArgs>
+  conversations?: boolean | Prisma.User$conversationsArgs<ExtArgs>
+  messages?: boolean | Prisma.User$messagesArgs<ExtArgs>
+  notifications?: boolean | Prisma.User$notificationsArgs<ExtArgs>
   supportTickets?: boolean | Prisma.User$supportTicketsArgs<ExtArgs>
+  workspaces?: boolean | Prisma.User$workspacesArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -1265,6 +1324,7 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   name?: boolean
   email?: boolean
   password?: boolean
+  googleId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["user"]>
@@ -1274,6 +1334,7 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   name?: boolean
   email?: boolean
   password?: boolean
+  googleId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["user"]>
@@ -1283,20 +1344,21 @@ export type UserSelectScalar = {
   name?: boolean
   email?: boolean
   password?: boolean
+  googleId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "email" | "password" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "email" | "password" | "googleId" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  conversations?: boolean | Prisma.User$conversationsArgs<ExtArgs>
-  messages?: boolean | Prisma.User$messagesArgs<ExtArgs>
   channels?: boolean | Prisma.User$channelsArgs<ExtArgs>
   channelMessages?: boolean | Prisma.User$channelMessagesArgs<ExtArgs>
-  notifications?: boolean | Prisma.User$notificationsArgs<ExtArgs>
   channelNotificationSettings?: boolean | Prisma.User$channelNotificationSettingsArgs<ExtArgs>
-  workspaces?: boolean | Prisma.User$workspacesArgs<ExtArgs>
+  conversations?: boolean | Prisma.User$conversationsArgs<ExtArgs>
+  messages?: boolean | Prisma.User$messagesArgs<ExtArgs>
+  notifications?: boolean | Prisma.User$notificationsArgs<ExtArgs>
   supportTickets?: boolean | Prisma.User$supportTicketsArgs<ExtArgs>
+  workspaces?: boolean | Prisma.User$workspacesArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -1305,20 +1367,21 @@ export type UserIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
 export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "User"
   objects: {
-    conversations: Prisma.$ConversationMemberPayload<ExtArgs>[]
-    messages: Prisma.$MessagePayload<ExtArgs>[]
     channels: Prisma.$ChannelMemberPayload<ExtArgs>[]
     channelMessages: Prisma.$ChannelMessagePayload<ExtArgs>[]
-    notifications: Prisma.$NotificationPayload<ExtArgs>[]
     channelNotificationSettings: Prisma.$ChannelNotificationSettingPayload<ExtArgs>[]
-    workspaces: Prisma.$WorkspacePayload<ExtArgs>[]
+    conversations: Prisma.$ConversationMemberPayload<ExtArgs>[]
+    messages: Prisma.$MessagePayload<ExtArgs>[]
+    notifications: Prisma.$NotificationPayload<ExtArgs>[]
     supportTickets: Prisma.$SupportTicketPayload<ExtArgs>[]
+    workspaces: Prisma.$WorkspacePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     name: string
     email: string
     password: string
+    googleId: string | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["user"]>
@@ -1715,14 +1778,14 @@ readonly fields: UserFieldRefs;
  */
 export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  conversations<T extends Prisma.User$conversationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$conversationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ConversationMemberPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  messages<T extends Prisma.User$messagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$messagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   channels<T extends Prisma.User$channelsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$channelsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ChannelMemberPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   channelMessages<T extends Prisma.User$channelMessagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$channelMessagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ChannelMessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  notifications<T extends Prisma.User$notificationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$notificationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   channelNotificationSettings<T extends Prisma.User$channelNotificationSettingsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$channelNotificationSettingsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ChannelNotificationSettingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  workspaces<T extends Prisma.User$workspacesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$workspacesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WorkspacePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  conversations<T extends Prisma.User$conversationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$conversationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ConversationMemberPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  messages<T extends Prisma.User$messagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$messagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  notifications<T extends Prisma.User$notificationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$notificationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   supportTickets<T extends Prisma.User$supportTicketsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$supportTicketsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SupportTicketPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  workspaces<T extends Prisma.User$workspacesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$workspacesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WorkspacePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1756,6 +1819,7 @@ export interface UserFieldRefs {
   readonly name: Prisma.FieldRef<"User", 'String'>
   readonly email: Prisma.FieldRef<"User", 'String'>
   readonly password: Prisma.FieldRef<"User", 'String'>
+  readonly googleId: Prisma.FieldRef<"User", 'String'>
   readonly createdAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"User", 'DateTime'>
 }
@@ -2151,54 +2215,6 @@ export type UserDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Internal
 }
 
 /**
- * User.conversations
- */
-export type User$conversationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the ConversationMember
-   */
-  select?: Prisma.ConversationMemberSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the ConversationMember
-   */
-  omit?: Prisma.ConversationMemberOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.ConversationMemberInclude<ExtArgs> | null
-  where?: Prisma.ConversationMemberWhereInput
-  orderBy?: Prisma.ConversationMemberOrderByWithRelationInput | Prisma.ConversationMemberOrderByWithRelationInput[]
-  cursor?: Prisma.ConversationMemberWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.ConversationMemberScalarFieldEnum | Prisma.ConversationMemberScalarFieldEnum[]
-}
-
-/**
- * User.messages
- */
-export type User$messagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the Message
-   */
-  select?: Prisma.MessageSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the Message
-   */
-  omit?: Prisma.MessageOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.MessageInclude<ExtArgs> | null
-  where?: Prisma.MessageWhereInput
-  orderBy?: Prisma.MessageOrderByWithRelationInput | Prisma.MessageOrderByWithRelationInput[]
-  cursor?: Prisma.MessageWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.MessageScalarFieldEnum | Prisma.MessageScalarFieldEnum[]
-}
-
-/**
  * User.channels
  */
 export type User$channelsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2247,30 +2263,6 @@ export type User$channelMessagesArgs<ExtArgs extends runtime.Types.Extensions.In
 }
 
 /**
- * User.notifications
- */
-export type User$notificationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the Notification
-   */
-  select?: Prisma.NotificationSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the Notification
-   */
-  omit?: Prisma.NotificationOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.NotificationInclude<ExtArgs> | null
-  where?: Prisma.NotificationWhereInput
-  orderBy?: Prisma.NotificationOrderByWithRelationInput | Prisma.NotificationOrderByWithRelationInput[]
-  cursor?: Prisma.NotificationWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.NotificationScalarFieldEnum | Prisma.NotificationScalarFieldEnum[]
-}
-
-/**
  * User.channelNotificationSettings
  */
 export type User$channelNotificationSettingsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2295,27 +2287,75 @@ export type User$channelNotificationSettingsArgs<ExtArgs extends runtime.Types.E
 }
 
 /**
- * User.workspaces
+ * User.conversations
  */
-export type User$workspacesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type User$conversationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
-   * Select specific fields to fetch from the Workspace
+   * Select specific fields to fetch from the ConversationMember
    */
-  select?: Prisma.WorkspaceSelect<ExtArgs> | null
+  select?: Prisma.ConversationMemberSelect<ExtArgs> | null
   /**
-   * Omit specific fields from the Workspace
+   * Omit specific fields from the ConversationMember
    */
-  omit?: Prisma.WorkspaceOmit<ExtArgs> | null
+  omit?: Prisma.ConversationMemberOmit<ExtArgs> | null
   /**
    * Choose, which related nodes to fetch as well
    */
-  include?: Prisma.WorkspaceInclude<ExtArgs> | null
-  where?: Prisma.WorkspaceWhereInput
-  orderBy?: Prisma.WorkspaceOrderByWithRelationInput | Prisma.WorkspaceOrderByWithRelationInput[]
-  cursor?: Prisma.WorkspaceWhereUniqueInput
+  include?: Prisma.ConversationMemberInclude<ExtArgs> | null
+  where?: Prisma.ConversationMemberWhereInput
+  orderBy?: Prisma.ConversationMemberOrderByWithRelationInput | Prisma.ConversationMemberOrderByWithRelationInput[]
+  cursor?: Prisma.ConversationMemberWhereUniqueInput
   take?: number
   skip?: number
-  distinct?: Prisma.WorkspaceScalarFieldEnum | Prisma.WorkspaceScalarFieldEnum[]
+  distinct?: Prisma.ConversationMemberScalarFieldEnum | Prisma.ConversationMemberScalarFieldEnum[]
+}
+
+/**
+ * User.messages
+ */
+export type User$messagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Message
+   */
+  select?: Prisma.MessageSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Message
+   */
+  omit?: Prisma.MessageOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MessageInclude<ExtArgs> | null
+  where?: Prisma.MessageWhereInput
+  orderBy?: Prisma.MessageOrderByWithRelationInput | Prisma.MessageOrderByWithRelationInput[]
+  cursor?: Prisma.MessageWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.MessageScalarFieldEnum | Prisma.MessageScalarFieldEnum[]
+}
+
+/**
+ * User.notifications
+ */
+export type User$notificationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Notification
+   */
+  select?: Prisma.NotificationSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Notification
+   */
+  omit?: Prisma.NotificationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.NotificationInclude<ExtArgs> | null
+  where?: Prisma.NotificationWhereInput
+  orderBy?: Prisma.NotificationOrderByWithRelationInput | Prisma.NotificationOrderByWithRelationInput[]
+  cursor?: Prisma.NotificationWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.NotificationScalarFieldEnum | Prisma.NotificationScalarFieldEnum[]
 }
 
 /**
@@ -2340,6 +2380,30 @@ export type User$supportTicketsArgs<ExtArgs extends runtime.Types.Extensions.Int
   take?: number
   skip?: number
   distinct?: Prisma.SupportTicketScalarFieldEnum | Prisma.SupportTicketScalarFieldEnum[]
+}
+
+/**
+ * User.workspaces
+ */
+export type User$workspacesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Workspace
+   */
+  select?: Prisma.WorkspaceSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Workspace
+   */
+  omit?: Prisma.WorkspaceOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.WorkspaceInclude<ExtArgs> | null
+  where?: Prisma.WorkspaceWhereInput
+  orderBy?: Prisma.WorkspaceOrderByWithRelationInput | Prisma.WorkspaceOrderByWithRelationInput[]
+  cursor?: Prisma.WorkspaceWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.WorkspaceScalarFieldEnum | Prisma.WorkspaceScalarFieldEnum[]
 }
 
 /**

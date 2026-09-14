@@ -1285,6 +1285,7 @@ export const UserScalarFieldEnum = {
   name: 'name',
   email: 'email',
   password: 'password',
+  googleId: 'googleId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -1344,10 +1345,10 @@ export const MessageScalarFieldEnum = {
   content: 'content',
   conversationId: 'conversationId',
   senderId: 'senderId',
-  isEdited: 'isEdited',
-  isDeleted: 'isDeleted',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  isDeleted: 'isDeleted',
+  isEdited: 'isEdited'
 } as const
 
 export type MessageScalarFieldEnum = (typeof MessageScalarFieldEnum)[keyof typeof MessageScalarFieldEnum]
