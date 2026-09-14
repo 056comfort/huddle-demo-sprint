@@ -1,11 +1,6 @@
 node_modules/
 dist/
 .env
-# Prisma generated runtime files
-src/generated/*.js
-src/generated/*.d.ts
-src/generated/*.wasm
-src/generated/*.mjs
-src/generated/runtime/
-src/generated/package.json
-src/generated/schema.prisma
+
+# Prisma generated client
+src/generated/
