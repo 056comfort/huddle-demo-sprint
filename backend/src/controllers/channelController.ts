@@ -9,7 +9,7 @@ export const createChannel = async (
 ) => {
   try {
     const currentUserId = req.user?.userId;
-    const { name, description } = req.body;
+    const { name, description, isPrivate } = req.body;
 
     if (!currentUserId) {
       return res.status(401).json({
@@ -17,9 +17,18 @@ export const createChannel = async (
       });
     }
 
-    if (!name || !name.trim()) {
+    if (!name || typeof name !== "string" || !name.trim()) {
       return res.status(400).json({
         message: "Channel name is required",
+      });
+    }
+
+    if (
+      isPrivate !== undefined &&
+      typeof isPrivate !== "boolean"
+    ) {
+      return res.status(400).json({
+        message: "isPrivate must be a boolean",
       });
     }
 
@@ -41,9 +50,10 @@ export const createChannel = async (
       data: {
         name: channelName,
         description:
-          description && description.trim()
+          typeof description === "string" && description.trim()
             ? description.trim()
             : null,
+        isPrivate: isPrivate ?? false,
 
         members: {
           create: {
@@ -97,6 +107,21 @@ export const getChannels = async (
     }
 
     const channels = await prisma.channel.findMany({
+      where: {
+        OR: [
+          {
+            isPrivate: false,
+          },
+          {
+            isPrivate: true,
+            members: {
+              some: {
+                userId: currentUserId,
+              },
+            },
+          },
+        ],
+      },
       orderBy: {
         createdAt: "asc",
       },
@@ -185,6 +210,18 @@ export const getChannelById = async (
       });
     }
 
+    if (channel.isPrivate) {
+      const isMember = channel.members.some(
+        (member) => member.userId === currentUserId
+      );
+
+      if (!isMember) {
+        return res.status(403).json({
+          message: "You do not have access to this private channel",
+        });
+      }
+    }
+
     return res.status(200).json({
       channel,
     });
@@ -205,7 +242,7 @@ export const updateChannel = async (
   try {
     const currentUserId = req.user?.userId;
     const channelId = req.params.channelId as string;
-    const { name, description } = req.body;
+    const { name, description, isPrivate } = req.body;
 
     if (!currentUserId) {
       return res.status(401).json({
@@ -240,13 +277,28 @@ export const updateChannel = async (
       });
     }
 
-    if (name !== undefined && !name.trim()) {
+    if (
+      name !== undefined &&
+      (typeof name !== "string" || !name.trim())
+    ) {
       return res.status(400).json({
         message: "Channel name cannot be empty",
       });
     }
 
-    if (name !== undefined && name.trim() !== existingChannel.name) {
+    if (
+      isPrivate !== undefined &&
+      typeof isPrivate !== "boolean"
+    ) {
+      return res.status(400).json({
+        message: "isPrivate must be a boolean",
+      });
+    }
+
+    if (
+      name !== undefined &&
+      name.trim() !== existingChannel.name
+    ) {
       const duplicateChannel =
         await prisma.channel.findUnique({
           where: {
@@ -275,9 +327,13 @@ export const updateChannel = async (
         }),
         ...(description !== undefined && {
           description:
-            description && description.trim()
+            typeof description === "string" &&
+            description.trim()
               ? description.trim()
               : null,
+        }),
+        ...(isPrivate !== undefined && {
+          isPrivate,
         }),
       },
       include: {
@@ -377,7 +433,7 @@ export const deleteChannel = async (
   }
 };
 
-// GET CHANNEL BY NAME (for legacy name-based URL resolution)
+// GET CHANNEL BY NAME
 export const getChannelByName = async (
   req: AuthRequest,
   res: Response
@@ -387,31 +443,67 @@ export const getChannelByName = async (
     const name = req.params.name as string;
 
     if (!currentUserId) {
-      return res.status(401).json({ message: "Authentication required" });
+      return res.status(401).json({
+        message: "Authentication required",
+      });
     }
 
+    const decodedName = decodeURIComponent(name);
+
     const channel = await prisma.channel.findUnique({
-      where: { name: decodeURIComponent(name) },
+      where: {
+        name: decodedName,
+      },
       include: {
         members: {
           select: {
             id: true,
             userId: true,
             joinedAt: true,
-            user: { select: { id: true, name: true, email: true } },
+            user: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+              },
+            },
           },
         },
-        _count: { select: { members: true, messages: true } },
+        _count: {
+          select: {
+            members: true,
+            messages: true,
+          },
+        },
       },
     });
 
     if (!channel) {
-      return res.status(404).json({ message: "Channel not found" });
+      return res.status(404).json({
+        message: "Channel not found",
+      });
     }
 
-    return res.status(200).json({ channel });
+    if (channel.isPrivate) {
+      const isMember = channel.members.some(
+        (member) => member.userId === currentUserId
+      );
+
+      if (!isMember) {
+        return res.status(403).json({
+          message: "You do not have access to this private channel",
+        });
+      }
+    }
+
+    return res.status(200).json({
+      channel,
+    });
   } catch (error) {
     console.error("Get channel by name error:", error);
-    return res.status(500).json({ message: "Failed to get channel" });
+
+    return res.status(500).json({
+      message: "Failed to get channel",
+    });
   }
 };
