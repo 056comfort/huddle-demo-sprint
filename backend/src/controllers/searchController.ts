@@ -24,9 +24,12 @@ export const search = async (
 
     const [users, channels, messages, channelMessages] =
       await Promise.all([
-        // Search users
+        // Search users, excluding the authenticated user.
         prisma.user.findMany({
           where: {
+            id: {
+              not: currentUserId,
+            },
             OR: [
               {
                 name: {
@@ -41,9 +44,6 @@ export const search = async (
                 },
               },
             ],
-            id: {
-              not: currentUserId,
-            },
           },
           select: {
             id: true,
@@ -53,9 +53,10 @@ export const search = async (
           take: 20,
         }),
 
-        // Search channels
+        // Search PUBLIC channels only.
         prisma.channel.findMany({
           where: {
+            isPrivate: false,
             OR: [
               {
                 name: {
@@ -81,7 +82,8 @@ export const search = async (
           take: 20,
         }),
 
-        // Search direct messages
+        // Search direct messages only where the authenticated
+        // user is a member of the conversation.
         prisma.message.findMany({
           where: {
             content: {
@@ -89,6 +91,13 @@ export const search = async (
               mode: "insensitive",
             },
             isDeleted: false,
+            conversation: {
+              members: {
+                some: {
+                  userId: currentUserId,
+                },
+              },
+            },
           },
           orderBy: {
             createdAt: "desc",
@@ -111,7 +120,8 @@ export const search = async (
           take: 20,
         }),
 
-        // Search channel messages
+        // Search channel messages only in channels where
+        // the authenticated user is a member.
         prisma.channelMessage.findMany({
           where: {
             content: {
@@ -119,6 +129,13 @@ export const search = async (
               mode: "insensitive",
             },
             isDeleted: false,
+            channel: {
+              members: {
+                some: {
+                  userId: currentUserId,
+                },
+              },
+            },
           },
           orderBy: {
             createdAt: "desc",
