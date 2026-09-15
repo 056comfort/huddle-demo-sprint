@@ -2,7 +2,7 @@ import { Response } from "express";
 import prisma from "../config/prisma";
 import { AuthRequest } from "../middleware/authMiddleware";
 
-// GET ALL NOTIFICATIONS
+// GET ALL NOTIFICATIONS FOR AUTHENTICATED USER
 export const getNotifications = async (
   req: AuthRequest,
   res: Response
@@ -46,6 +46,103 @@ export const getNotifications = async (
 
     return res.status(500).json({
       message: "Failed to get notifications",
+    });
+  }
+};
+
+// MARK ONE NOTIFICATION AS READ
+export const markNotificationAsRead = async (
+  req: AuthRequest,
+  res: Response
+) => {
+  try {
+    const userId = req.user?.userId;
+    const notificationId = req.params.notificationId as string;
+
+    if (!userId) {
+      return res.status(401).json({
+        message: "Authentication required",
+      });
+    }
+
+    const notification = await prisma.notification.findUnique({
+      where: {
+        id: notificationId,
+      },
+    });
+
+    if (!notification) {
+      return res.status(404).json({
+        message: "Notification not found",
+      });
+    }
+
+    // Prevent users from modifying another user's notification.
+    if (notification.userId !== userId) {
+      return res.status(403).json({
+        message: "You can only modify your own notifications",
+      });
+    }
+
+    const updatedNotification =
+      await prisma.notification.update({
+        where: {
+          id: notificationId,
+        },
+        data: {
+          isRead: true,
+        },
+      });
+
+    return res.status(200).json({
+      message: "Notification marked as read",
+      notification: updatedNotification,
+    });
+  } catch (error) {
+    console.error("Mark notification as read error:", error);
+
+    return res.status(500).json({
+      message: "Failed to mark notification as read",
+    });
+  }
+};
+
+// MARK ALL AUTHENTICATED USER'S NOTIFICATIONS AS READ
+export const markAllNotificationsAsRead = async (
+  req: AuthRequest,
+  res: Response
+) => {
+  try {
+    const userId = req.user?.userId;
+
+    if (!userId) {
+      return res.status(401).json({
+        message: "Authentication required",
+      });
+    }
+
+    const result = await prisma.notification.updateMany({
+      where: {
+        userId,
+        isRead: false,
+      },
+      data: {
+        isRead: true,
+      },
+    });
+
+    return res.status(200).json({
+      message: "All notifications marked as read",
+      updatedCount: result.count,
+    });
+  } catch (error) {
+    console.error(
+      "Mark all notifications as read error:",
+      error
+    );
+
+    return res.status(500).json({
+      message: "Failed to mark all notifications as read",
     });
   }
 };
@@ -114,78 +211,6 @@ export const getChannelNotifications = async (
 
     return res.status(500).json({
       message: "Failed to get channel notifications",
-    });
-  }
-};
-
-// UPDATE CHANNEL NOTIFICATION SETTINGS
-export const updateChannelNotificationSettings = async (
-  req: AuthRequest,
-  res: Response
-) => {
-  try {
-    const userId = req.user?.userId;
-    const channelId = req.params.channelId as string;
-
-    const { enabled } = req.body;
-
-    if (!userId) {
-      return res.status(401).json({
-        message: "Authentication required",
-      });
-    }
-
-    if (typeof enabled !== "boolean") {
-      return res.status(400).json({
-        message: "enabled must be a boolean",
-      });
-    }
-
-    const membership = await prisma.channelMember.findUnique({
-      where: {
-        channelId_userId: {
-          channelId,
-          userId,
-        },
-      },
-    });
-
-    if (!membership) {
-      return res.status(403).json({
-        message: "You are not a member of this channel",
-      });
-    }
-
-    const settings =
-      await prisma.channelNotificationSetting.upsert({
-        where: {
-          channelId_userId: {
-            channelId,
-            userId,
-          },
-        },
-        update: {
-          enabled,
-        },
-        create: {
-          channelId,
-          userId,
-          enabled,
-        },
-      });
-
-    return res.status(200).json({
-      message: "Channel notification settings updated successfully",
-      settings,
-    });
-  } catch (error) {
-    console.error(
-      "Update channel notification settings error:",
-      error
-    );
-
-    return res.status(500).json({
-      message: "Failed to update channel notification settings",
     });
   }
 };

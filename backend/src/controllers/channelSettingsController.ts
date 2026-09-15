@@ -226,3 +226,128 @@ export const updateChannelSettings = async (
     });
   }
 };
+ // GET CURRENT USER'S CHANNEL NOTIFICATION SETTING
+export const getChannelNotificationSetting = async (
+  req: AuthRequest,
+  res: Response
+) => {
+  try {
+    const userId = req.user?.userId;
+    const channelId = String(req.params.channelId);
+
+    if (!userId) {
+      return res.status(401).json({
+        message: "Authentication required",
+      });
+    }
+
+    const membership = await prisma.channelMember.findUnique({
+      where: {
+        channelId_userId: {
+          channelId,
+          userId,
+        },
+      },
+    });
+
+    if (!membership) {
+      return res.status(403).json({
+        message: "You are not a member of this channel",
+      });
+    }
+
+    const setting = await prisma.channelNotificationSetting.findUnique({
+      where: {
+        channelId_userId: {
+          channelId,
+          userId,
+        },
+      },
+    });
+
+    return res.status(200).json({
+      channelId,
+      notificationsEnabled: setting?.enabled ?? true,
+    });
+  } catch (error) {
+    console.error(
+      "Get channel notification setting error:",
+      error
+    );
+
+    return res.status(500).json({
+      message: "Failed to get channel notification setting",
+    });
+  }
+};
+
+// ENABLE/DISABLE CURRENT USER'S CHANNEL NOTIFICATIONS
+export const updateChannelNotificationSetting = async (
+  req: AuthRequest,
+  res: Response
+) => {
+  try {
+    const userId = req.user?.userId;
+    const channelId = String(req.params.channelId);
+    const { notificationsEnabled } = req.body;
+
+    if (!userId) {
+      return res.status(401).json({
+        message: "Authentication required",
+      });
+    }
+
+    if (typeof notificationsEnabled !== "boolean") {
+      return res.status(400).json({
+        message: "notificationsEnabled must be a boolean",
+      });
+    }
+
+    const membership = await prisma.channelMember.findUnique({
+      where: {
+        channelId_userId: {
+          channelId,
+          userId,
+        },
+      },
+    });
+
+    if (!membership) {
+      return res.status(403).json({
+        message: "You are not a member of this channel",
+      });
+    }
+
+    const setting = await prisma.channelNotificationSetting.upsert({
+      where: {
+        channelId_userId: {
+          channelId,
+          userId,
+        },
+      },
+      update: {
+        enabled: notificationsEnabled,
+      },
+      create: {
+        channelId,
+        userId,
+        enabled: notificationsEnabled,
+      },
+    });
+
+    return res.status(200).json({
+      message: "Channel notification setting updated successfully",
+      channelId,
+      notificationsEnabled: setting.enabled,
+    });
+  } catch (error) {
+    console.error(
+      "Update channel notification setting error:",
+      error
+    );
+
+    return res.status(500).json({
+      message: "Failed to update channel notification setting",
+    });
+  }
+};
