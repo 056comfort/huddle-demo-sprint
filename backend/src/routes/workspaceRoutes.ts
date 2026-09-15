@@ -7,6 +7,8 @@ import {
   inviteWorkspaceMember,
   acceptWorkspaceInvite,
   removeWorkspaceMember,
+  getAvailableWorkspaces,
+  joinWorkspace,
 } from "../controllers/workspaceController";
 import { protect } from "../middleware/authMiddleware";
 
@@ -20,6 +22,8 @@ router.post("/invites/:token/accept", acceptWorkspaceInvite);
 // Workspace
 router.post("/", createWorkspace);
 router.get("/", getWorkspaces);
+router.get("/available", getAvailableWorkspaces);
+router.post("/:id/join", joinWorkspace);
 router.get("/:id", getWorkspaceById);
 
 // Members
