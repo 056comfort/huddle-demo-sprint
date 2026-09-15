@@ -210,40 +210,8 @@ function ChannelMessagingPage() {
 
   const channelName = decodeURIComponent(channelId || "general");
 
-  const [messages, setMessages] = useState([
-    {
-      id: 1,
-      sender: "Sarah",
-      avatar: "S",
-      message: "Hey everyone 👋",
-      time: "9:41 AM",
-      isCurrentUser: false,
-    },
-    {
-      id: 2,
-      sender: "David",
-      avatar: "D",
-      message: "Hey Sarah! How's everyone doing?",
-      time: "9:43 AM",
-      isCurrentUser: false,
-    },
-    {
-      id: 3,
-      sender: "Sarah",
-      avatar: "S",
-      message: "Doing great. Ready to get started.",
-      time: "9:44 AM",
-      isCurrentUser: false,
-    },
-    {
-      id: 4,
-      sender: "David",
-      avatar: "D",
-      message: "Same here. Let's get this moving.",
-      time: "9:45 AM",
-      isCurrentUser: false,
-    },
-  ]);
+  // New channels start completely empty.
+  const [messages, setMessages] = useState([]);
 
   function handleSendMessage(message) {
     if (!message?.trim()) {
@@ -279,7 +247,6 @@ function ChannelMessagingPage() {
 
   return (
     <div className="app-shell">
-      {/* Mobile backdrop */}
       {isSidebarOpen && (
         <button
           type="button"
@@ -289,7 +256,6 @@ function ChannelMessagingPage() {
         />
       )}
 
-      {/* Sidebar */}
       <aside
         className={`app-sidebar ${
           isSidebarOpen ? "sidebar-open" : ""
@@ -308,7 +274,6 @@ function ChannelMessagingPage() {
 
         <ChannelList activeChannel={channelName} />
 
-        {/* Clickable profile */}
         <Link to="/profile" className="profile">
           <UserAvatar letter="Y" />
 
@@ -323,10 +288,8 @@ function ChannelMessagingPage() {
         </Link>
       </aside>
 
-      {/* Main chat area */}
       <main className="chat-main">
         <header className="chat-header">
-          {/* Mobile menu */}
           <button
             type="button"
             className="mobile-menu-button"
@@ -337,7 +300,6 @@ function ChannelMessagingPage() {
             <MenuIcon />
           </button>
 
-          {/* Channel title */}
           <button
             type="button"
             className="chat-channel-title"
@@ -359,9 +321,7 @@ function ChannelMessagingPage() {
             </span>
           </button>
 
-          {/* Channel actions */}
           <div className="chat-header-actions">
-            {/* Video call */}
             <button
               type="button"
               aria-label="Start video call"
@@ -375,7 +335,6 @@ function ChannelMessagingPage() {
               <VideoCallIcon />
             </button>
 
-            {/* Audio call */}
             <button
               type="button"
               aria-label="Start audio call"
@@ -389,7 +348,6 @@ function ChannelMessagingPage() {
               <CallIcon />
             </button>
 
-            {/* Notifications */}
             <button
               type="button"
               aria-label="Notifications"
@@ -403,7 +361,6 @@ function ChannelMessagingPage() {
               <BellIcon />
             </button>
 
-            {/* Members */}
             <button
               type="button"
               aria-label="View members"
@@ -419,19 +376,16 @@ function ChannelMessagingPage() {
           </div>
         </header>
 
-        {/* Messages */}
         <section className="chat-content">
           <MessageList messages={messages} />
         </section>
 
-        {/* Message composer */}
         <div className="chat-composer">
           <MessageInput
             onSendMessage={handleSendMessage}
           />
         </div>
 
-        {/* Footer */}
         <div className="chat-footer-note">
           Messages sent in this channel are visible to
           channel members.

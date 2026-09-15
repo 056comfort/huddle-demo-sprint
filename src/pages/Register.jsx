@@ -1,3 +1,4 @@
+// src/pages/Register.jsx
 import './Register.css'
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
@@ -47,7 +48,7 @@ function Register() {
       setPassword('')
       setConfirmPassword('')
 
-      // Redirect to Create Workspace
+      // Redirect to Create Channel
       navigate('/create-workspace')
     } catch (err) {
       setError(err.message || 'Something went wrong')
@@ -129,7 +130,9 @@ function Register() {
                 className="password-toggle"
                 onClick={() => setShowPassword(!showPassword)}
                 disabled={loading}
-                aria-label={showPassword ? 'Hide password' : 'Show password'}
+                aria-label={
+                  showPassword ? 'Hide password' : 'Show password'
+                }
               >
                 {showPassword ? (
                   <svg
@@ -144,7 +147,7 @@ function Register() {
                     <path d="M3 3l18 18" />
                     <path d="M10.58 10.58a2 2 0 0 0 2.83 2.83" />
                     <path d="M9.88 4.24A9.8 9.8 0 0 1 12 4c5 0 9.27 3.11 11 8a18.5 18.5 0 0 1-3.16 5.19" />
-                    <path d="M6.61 6.61A18.5 18.5 0 0 0 1 12c1.73 4.89 6 8 11 8a9.8 9.8 0 0 0 2.12-.24" />
+                    <path d="M6.61 6.61A18.5 18.5 0 0 0 12 20a9.8 9.8 0 0 0 2.12-.24" />
                   </svg>
                 ) : (
                   <svg
@@ -209,7 +212,7 @@ function Register() {
                     <path d="M3 3l18 18" />
                     <path d="M10.58 10.58a2 2 0 0 0 2.83 2.83" />
                     <path d="M9.88 4.24A9.8 9.8 0 0 1 12 4c5 0 9.27 3.11 11 8a18.5 18.5 0 0 1-3.16 5.19" />
-                    <path d="M6.61 6.61A18.5 18.5 0 0 0 1 12c1.73 4.89 6 8 11 8a9.8 9.8 0 0 1 2.12-.24" />
+                    <path d="M6.61 6.61A18.5 18.5 0 0 1 12 20a9.8 9.8 0 0 1 2.12-.24" />
                   </svg>
                 ) : (
                   <svg

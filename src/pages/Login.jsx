@@ -36,6 +36,8 @@ function Login() {
         if (data.token) {
           localStorage.setItem('token', data.token)
         }
+
+        // After signing in, go directly to Create Channel
         navigate('/create-workspace')
       } else {
         setError(data.message || data.error || 'Invalid credentials')
@@ -89,7 +91,9 @@ function Login() {
                 className="password-toggle"
                 onClick={() => setShowPassword(!showPassword)}
                 disabled={loading}
-                aria-label={showPassword ? 'Hide password' : 'Show password'}
+                aria-label={
+                  showPassword ? 'Hide password' : 'Show password'
+                }
               >
                 {showPassword ? (
                   <svg
@@ -130,7 +134,11 @@ function Login() {
             </div>
           </div>
 
-          <button type="submit" className="auth-button" disabled={loading}>
+          <button
+            type="submit"
+            className="auth-button"
+            disabled={loading}
+          >
             {loading ? 'Signing in...' : 'Sign in'}
           </button>
         </form>

@@ -1,5 +1,6 @@
+// src/pages/CreateWorkspace.jsx
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { endpoints } from '../api/apiConfig'
 
 function CreateWorkspace() {
@@ -65,6 +66,10 @@ function CreateWorkspace() {
     }
   }
 
+  const handleSkip = () => {
+    navigate('/join-channel')
+  }
+
   const styles = {
     page: {
       display: 'flex',
@@ -81,7 +86,8 @@ function CreateWorkspace() {
       borderRadius: '16px',
       boxShadow: '0 8px 30px rgba(0, 0, 0, 0.08)',
       width: '420px',
-      height: '550px',
+      minHeight: '550px',
+      boxSizing: 'border-box',
       display: 'flex',
       flexDirection: 'column',
       justifyContent: 'center',
@@ -91,9 +97,17 @@ function CreateWorkspace() {
       marginBottom: '32px',
     },
 
+    title: {
+      margin: '0 0 10px',
+      fontSize: '28px',
+      fontWeight: '700',
+      color: '#1a1a2e',
+    },
+
     headerP: {
       color: '#6b7280',
       fontSize: '16px',
+      lineHeight: '1.5',
       margin: '0',
     },
 
@@ -142,6 +156,35 @@ function CreateWorkspace() {
       opacity: loading ? 0.7 : 1,
     },
 
+    skipButton: {
+      padding: '12px',
+      background: 'transparent',
+      color: '#6C63FF',
+      border: 'none',
+      borderRadius: '8px',
+      fontSize: '14px',
+      fontFamily: 'system-ui, sans-serif',
+      fontWeight: '600',
+      cursor: loading ? 'not-allowed' : 'pointer',
+      width: '100%',
+      marginTop: '4px',
+    },
+
+    divider: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: '12px',
+      margin: '20px 0 8px',
+      color: '#9ca3af',
+      fontSize: '12px',
+    },
+
+    dividerLine: {
+      flex: 1,
+      height: '1px',
+      background: '#e5e7eb',
+    },
+
     error: {
       background: '#fee2e2',
       color: '#ef4444',
@@ -160,19 +203,6 @@ function CreateWorkspace() {
       fontSize: '14px',
       textAlign: 'center',
       marginBottom: '16px',
-    },
-
-    footer: {
-      textAlign: 'center',
-      marginTop: '24px',
-      fontSize: '14px',
-      color: '#6b7280',
-    },
-
-    footerLink: {
-      color: '#6C63FF',
-      fontWeight: '600',
-      textDecoration: 'none',
     },
   }
 
@@ -209,6 +239,8 @@ function CreateWorkspace() {
     <div style={styles.page}>
       <div style={styles.card}>
         <div style={styles.header}>
+          <h1 style={styles.title}>Create a Workspace</h1>
+
           <p style={styles.headerP}>
             Set up your team's workspace to start collaborating.
           </p>
@@ -280,14 +312,20 @@ function CreateWorkspace() {
           </button>
         </form>
 
-        <p style={styles.footer}>
-          <Link
-            to="/login"
-            style={styles.footerLink}
-          >
-            Back to Login
-          </Link>
-        </p>
+        <div style={styles.divider}>
+          <span style={styles.dividerLine} />
+          OR
+          <span style={styles.dividerLine} />
+        </div>
+
+        <button
+          type="button"
+          style={styles.skipButton}
+          onClick={handleSkip}
+          disabled={loading}
+        >
+          Skip — I already have a workspace
+        </button>
       </div>
     </div>
   )

@@ -37,37 +37,19 @@ function SearchIcon() {
   );
 }
 
-const members = [
-  {
-    id: "you",
-    name: "You",
-    role: "You",
-    status: "online",
-    initial: "Y",
-  },
-  {
-    id: "sarah",
-    name: "Sarah",
-    role: "Member",
-    status: "online",
-    initial: "S",
-  },
-  {
-    id: "david",
-    name: "David",
-    role: "Member",
-    status: "offline",
-    initial: "D",
-  },
-];
-
 function ChannelMembersPage() {
   const { channelId } = useParams();
   const navigate = useNavigate();
 
   const [search, setSearch] = useState("");
 
-  const channelName = decodeURIComponent(channelId || "general");
+  const channelName = channelId
+    ? decodeURIComponent(channelId)
+    : "";
+
+  // Empty for new channels.
+  // Real members will be connected here later from the backend.
+  const members = [];
 
   const filteredMembers = useMemo(() => {
     const value = search.toLowerCase().trim();
@@ -137,7 +119,9 @@ function ChannelMembersPage() {
                 </span>
               </div>
 
-              <span className="member-role">{member.role}</span>
+              <span className="member-role">
+                {member.role}
+              </span>
             </article>
           ))}
 

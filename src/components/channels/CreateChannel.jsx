@@ -19,6 +19,25 @@ function CreateChannel() {
 
     setError("");
 
+    // Store the created channel temporarily on the frontend.
+    // The backend can replace this with database storage later.
+    const existingChannels = JSON.parse(
+      localStorage.getItem("huddle_channels") || "[]"
+    );
+
+    const channelExists = existingChannels.some(
+      (channel) => channel.toLowerCase() === cleanName.toLowerCase()
+    );
+
+    if (!channelExists) {
+      const updatedChannels = [...existingChannels, cleanName];
+
+      localStorage.setItem(
+        "huddle_channels",
+        JSON.stringify(updatedChannels)
+      );
+    }
+
     navigate(`/channel/${encodeURIComponent(cleanName)}`);
   };
 
@@ -58,7 +77,8 @@ function CreateChannel() {
       </form>
 
       <p className="secondary-action">
-        Already have a channel? <Link to="/join-channel">Join a channel</Link>
+        Already have a channel?{" "}
+        <Link to="/join-channel">Join a channel</Link>
       </p>
     </section>
   );

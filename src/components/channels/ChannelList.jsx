@@ -1,11 +1,7 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
-const channels = ["general", "design", "development"];
-
-const directMessages = [
-  { id: "sarah", name: "Sarah", status: "online", avatar: "S" },
-  { id: "david", name: "David", status: "online", avatar: "D" },
-];
+const directMessages = [];
 
 function HashIcon() {
   return (
@@ -40,9 +36,8 @@ function SearchIcon() {
         strokeLinecap="round"
       />
     </svg>
-  )
+  );
 }
-
 
 function SettingsIcon() {
   return (
@@ -101,7 +96,6 @@ function PlusIcon() {
   );
 }
 
-
 function StatusDot({ status = "online" }) {
   return <span className={`person-status ${status}`} />;
 }
@@ -116,11 +110,31 @@ function PersonAvatar({ letter, status = "online" }) {
 }
 
 function ChannelList({ activeChannel }) {
+  const [channels, setChannels] = useState([]);
+
+  useEffect(() => {
+    const loadChannels = () => {
+      const savedChannels = JSON.parse(
+        localStorage.getItem("huddle_channels") || "[]"
+      );
+
+      setChannels(savedChannels);
+    };
+
+    loadChannels();
+
+    window.addEventListener("storage", loadChannels);
+
+    return () => {
+      window.removeEventListener("storage", loadChannels);
+    };
+  }, []);
+
   return (
     <div className="sidebar-navigation">
       <Link to="/join-channel" className="sidebar-home-link">
-      <SearchIcon />
-      <span>Join channel</span>
+        <SearchIcon />
+        <span>Join channel</span>
       </Link>
 
       <section className="sidebar-section">
@@ -153,45 +167,45 @@ function ChannelList({ activeChannel }) {
       </section>
 
       <section className="sidebar-section direct-message-section">
-  <div className="sidebar-section-heading">
-    <span>Direct messages</span>
+        <div className="sidebar-section-heading">
+          <span>Direct messages</span>
 
-    <Link
-      to="/dm/new"
-      className="section-add-button"
-      aria-label="Start a new direct message"
-    >
-      <PlusIcon />
-    </Link>
-  </div>
+          <Link
+            to="/dm/new"
+            className="section-add-button"
+            aria-label="Start a new direct message"
+          >
+            <PlusIcon />
+          </Link>
+        </div>
 
-  <div className="direct-message-list">
-    {directMessages.map((person) => (
-      <Link
-        key={person.id}
-        to={`/dm/${person.id}`}
-        className="direct-message-item"
-      >
-        <PersonAvatar
-          letter={person.avatar}
-          status={person.status}
-        />
+        <div className="direct-message-list">
+          {directMessages.map((person) => (
+            <Link
+              key={person.id}
+              to={`/dm/${person.id}`}
+              className="direct-message-item"
+            >
+              <PersonAvatar
+                letter={person.avatar}
+                status={person.status}
+              />
 
-        <span>{person.name}</span>
-      </Link>
-    ))}
-  </div>
-</section>
+              <span>{person.name}</span>
+            </Link>
+          ))}
+        </div>
+      </section>
 
       <div className="sidebar-bottom-links">
         <Link to="/settings" className="sidebar-bottom-link">
-        <SettingsIcon />
-        <span>Settings</span>
+          <SettingsIcon />
+          <span>Settings</span>
         </Link>
 
         <Link to="/support" className="sidebar-bottom-link">
-        <HelpIcon />
-        <span>Support</span>
+          <HelpIcon />
+          <span>Support</span>
         </Link>
       </div>
     </div>
