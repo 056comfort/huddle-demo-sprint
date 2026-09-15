@@ -1,9 +1,8 @@
 // src/pages/Register.jsx
+
 import './Register.css'
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { endpoints } from '../api/apiConfig'
-import { useAuth } from '../hooks/useAuth'
 
 function Register() {
   const [fullName, setFullName] = useState('')
@@ -17,7 +16,6 @@ function Register() {
   const [loading, setLoading] = useState(false)
 
   const navigate = useNavigate()
-  const auth = useAuth()
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -44,43 +42,22 @@ function Register() {
     }
 
     try {
-      const response = await fetch(endpoints.register, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: fullName, email, password }),
-      })
+      setSuccess('Account created successfully!')
 
-      const data = await response.json()
+      setFullName('')
+      setEmail('')
+      setPassword('')
+      setConfirmPassword('')
 
-      if (response.ok && (data.token || data.user)) {
-        if (data.token) {
-          auth.register({
-            token: data.token,
-            user: data.user || { name: fullName, email },
-          })
-        }
-        setSuccess('Account created! Redirecting...')
-        setTimeout(() => navigate('/join-channel'), 1000)
-      } else {
-        setError(data.message || 'Could not create account. Please try again.')
-      }
-    } catch {
-      setError('Unable to reach the server. Please check your connection.')
+      setTimeout(() => {
+        navigate('/create-workspace')
+      }, 500)
+    } catch (err) {
+      setError('Cannot reach server. Please try again.')
+      console.error(err)
     } finally {
       setLoading(false)
     }
-  }
-
-  const handleGoogleLogin = () => {
-    const googleEmail = window.prompt("Enter your Google email to sign up:");
-    if (!googleEmail) return;
-
-    setLoading(true)
-    auth.register({
-      user: { name: googleEmail.split("@")[0], email: googleEmail },
-    })
-    setSuccess('Signed in with Google! Redirecting...')
-    setTimeout(() => navigate('/join-channel'), 800)
   }
 
   return (
@@ -88,7 +65,9 @@ function Register() {
       <div className="auth-card">
         <div className="auth-header">
           <h2>Create your Huddle account</h2>
-          <p>Create an account to start collaborating with your team.</p>
+          <p>
+            Create an account to start collaborating with your team.
+          </p>
         </div>
 
         {error && <div className="auth-error">{error}</div>}
@@ -121,21 +100,25 @@ function Register() {
 
           <div className="form-group">
             <label htmlFor="password">Password</label>
+
             <div className="password-input-wrapper">
               <input
                 id="password"
                 type={showPassword ? 'text' : 'password'}
-                placeholder="**********"
+                placeholder="********"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 disabled={loading}
               />
+
               <button
                 type="button"
                 className="password-toggle"
                 onClick={() => setShowPassword(!showPassword)}
                 disabled={loading}
-                aria-label={showPassword ? 'Hide password' : 'Show password'}
+                aria-label={
+                  showPassword ? 'Hide password' : 'Show password'
+                }
               >
                 {showPassword ? (
                   <svg
@@ -168,30 +151,37 @@ function Register() {
                 )}
               </button>
             </div>
-            <div className={`password-hint ${password && password.length < 8 ? 'hint-warning' : ''}`}>
-              {password && password.length < 8
-                ? '⚠️ Password must be at least 8 characters long.'
-                : 'Must be at least 8 characters long.'}
+
+            <div className="password-hint">
+              Must be at least 8 characters long.
             </div>
           </div>
 
           <div className="form-group">
             <label htmlFor="confirmPassword">Confirm Password</label>
+
             <div className="password-input-wrapper">
               <input
                 id="confirmPassword"
                 type={showConfirmPassword ? 'text' : 'password'}
-                placeholder="**********"
+                placeholder="********"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 disabled={loading}
               />
+
               <button
                 type="button"
                 className="password-toggle"
-                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                onClick={() =>
+                  setShowConfirmPassword(!showConfirmPassword)
+                }
                 disabled={loading}
-                aria-label={showConfirmPassword ? 'Hide confirm password' : 'Show confirm password'}
+                aria-label={
+                  showConfirmPassword
+                    ? 'Hide confirm password'
+                    : 'Show confirm password'
+                }
               >
                 {showConfirmPassword ? (
                   <svg
@@ -206,7 +196,7 @@ function Register() {
                     <path d="M3 3l18 18" />
                     <path d="M10.58 10.58a2 2 0 0 0 2.83 2.83" />
                     <path d="M9.88 4.24A9.8 9.8 0 0 1 12 4c5 0 9.27 3.11 11 8a18.5 18.5 0 0 1-3.16 5.19" />
-                    <path d="M6.61 6.61A18.5 18.5 0 0 0 12 20a9.8 9.8 0 0 0 2.12-.24" />
+                    <path d="M6.61 6.61A18.5 18.5 0 0 1 12 20a9.8 9.8 0 0 1 2.12-.24" />
                   </svg>
                 ) : (
                   <svg
@@ -226,7 +216,11 @@ function Register() {
             </div>
           </div>
 
-          <button type="submit" className="auth-button" disabled={loading}>
+          <button
+            type="submit"
+            className="auth-button"
+            disabled={loading}
+          >
             {loading ? 'Creating account...' : 'Create your account'}
           </button>
         </form>
@@ -235,7 +229,7 @@ function Register() {
           <span>OR CONTINUE WITH</span>
         </div>
 
-        <button type="button" className="social-button" onClick={handleGoogleLogin} disabled={loading}>
+        <button className="social-button">
           <span className="social-icon">G</span>
           Google Account
         </button>
@@ -249,4 +243,3 @@ function Register() {
 }
 
 export default Register
-

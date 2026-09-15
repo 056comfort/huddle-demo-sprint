@@ -3,7 +3,6 @@ import './Login.css'
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { endpoints } from '../api/apiConfig'
-import { useAuth } from '../hooks/useAuth'
 
 function Login() {
   const [email, setEmail] = useState('')
@@ -12,7 +11,6 @@ function Login() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
-  const auth = useAuth()
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -34,24 +32,22 @@ function Login() {
 
       const data = await response.json()
 
-      if (response.ok && data.token) {
-        auth.login({
-          token: data.token,
-          user: data.user || { email, name: email.split('@')[0] },
-        })
-        navigate('/join-channel')
+      if (response.ok && data.success !== false) {
+        if (data.token) {
+          localStorage.setItem('token', data.token)
+        }
+
+        // After signing in, go directly to Create Channel
+        navigate('/create-workspace')
       } else {
-        setError(data.message || 'Invalid email or password.')
+        setError(data.message || data.error || 'Invalid credentials')
       }
-    } catch {
-      setError('Unable to reach the server. Please check your connection.')
+    } catch (err) {
+      setError('Cannot reach server. Please try again.')
+      console.error(err)
     } finally {
       setLoading(false)
     }
-  }
-
-  const handleGoogleLogin = () => {
-    alert('Google Sign-In is not yet configured. Please use email and password.')
   }
 
   return (
@@ -95,7 +91,9 @@ function Login() {
                 className="password-toggle"
                 onClick={() => setShowPassword(!showPassword)}
                 disabled={loading}
-                aria-label={showPassword ? 'Hide password' : 'Show password'}
+                aria-label={
+                  showPassword ? 'Hide password' : 'Show password'
+                }
               >
                 {showPassword ? (
                   <svg
@@ -136,7 +134,11 @@ function Login() {
             </div>
           </div>
 
-          <button type="submit" className="auth-button" disabled={loading}>
+          <button
+            type="submit"
+            className="auth-button"
+            disabled={loading}
+          >
             {loading ? 'Signing in...' : 'Sign in'}
           </button>
         </form>
@@ -148,8 +150,6 @@ function Login() {
         <button
           type="button"
           className="social-button"
-          onClick={handleGoogleLogin}
-          disabled={loading}
         >
           <span className="social-icon">G</span>
           Google Account
@@ -163,4 +163,4 @@ function Login() {
   )
 }
 
-export default Login
+export default Login
