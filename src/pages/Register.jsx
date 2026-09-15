@@ -1,4 +1,5 @@
 // src/pages/Register.jsx
+
 import './Register.css'
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
@@ -18,29 +19,29 @@ function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-
     setError('')
     setSuccess('')
+    setLoading(true)
 
-    if (!fullName.trim() || !email.trim() || !password || !confirmPassword) {
+    if (!fullName || !email || !password || !confirmPassword) {
       setError('Please fill in all fields')
+      setLoading(false)
       return
     }
 
     if (password !== confirmPassword) {
       setError('Passwords do not match')
+      setLoading(false)
       return
     }
 
     if (password.length < 8) {
       setError('Password must be at least 8 characters')
+      setLoading(false)
       return
     }
 
-    setLoading(true)
-
     try {
-      // Registration API will be connected here.
       setSuccess('Account created successfully!')
 
       setFullName('')
@@ -48,10 +49,12 @@ function Register() {
       setPassword('')
       setConfirmPassword('')
 
-      // Redirect to Create Channel
-      navigate('/create-workspace')
+      setTimeout(() => {
+        navigate('/create-workspace')
+      }, 500)
     } catch (err) {
-      setError(err.message || 'Something went wrong')
+      setError('Cannot reach server. Please try again.')
+      console.error(err)
     } finally {
       setLoading(false)
     }
@@ -67,24 +70,12 @@ function Register() {
           </p>
         </div>
 
-        {error && (
-          <div className="auth-error">
-            {error}
-          </div>
-        )}
-
-        {success && (
-          <div className="auth-success">
-            {success}
-          </div>
-        )}
+        {error && <div className="auth-error">{error}</div>}
+        {success && <div className="auth-success">{success}</div>}
 
         <form onSubmit={handleSubmit} className="auth-form">
           <div className="form-group">
-            <label htmlFor="fullName">
-              Full Name
-            </label>
-
+            <label htmlFor="fullName">Full Name</label>
             <input
               id="fullName"
               type="text"
@@ -96,10 +87,7 @@ function Register() {
           </div>
 
           <div className="form-group">
-            <label htmlFor="email">
-              Email Address
-            </label>
-
+            <label htmlFor="email">Email Address</label>
             <input
               id="email"
               type="email"
@@ -111,9 +99,7 @@ function Register() {
           </div>
 
           <div className="form-group">
-            <label htmlFor="password">
-              Password
-            </label>
+            <label htmlFor="password">Password</label>
 
             <div className="password-input-wrapper">
               <input
@@ -172,9 +158,7 @@ function Register() {
           </div>
 
           <div className="form-group">
-            <label htmlFor="confirmPassword">
-              Confirm Password
-            </label>
+            <label htmlFor="confirmPassword">Confirm Password</label>
 
             <div className="password-input-wrapper">
               <input
@@ -237,7 +221,7 @@ function Register() {
             className="auth-button"
             disabled={loading}
           >
-            {loading ? 'Creating account...' : 'Create Account'}
+            {loading ? 'Creating account...' : 'Create your account'}
           </button>
         </form>
 
@@ -245,19 +229,13 @@ function Register() {
           <span>OR CONTINUE WITH</span>
         </div>
 
-        <button
-          type="button"
-          className="social-button"
-        >
+        <button className="social-button">
           <span className="social-icon">G</span>
           Google Account
         </button>
 
         <p className="auth-footer">
-          Already have an account?{' '}
-          <Link to="/login">
-            Login
-          </Link>
+          Already have an account? <Link to="/login">Login</Link>
         </p>
       </div>
     </div>

@@ -50,7 +50,9 @@ function CreateWorkspace() {
 
       if (!response.ok) {
         throw new Error(
-          data.message || data.error || 'Failed to create workspace'
+          data.message ||
+            data.error ||
+            'Failed to create workspace'
         )
       }
 
@@ -138,6 +140,7 @@ function CreateWorkspace() {
       background: '#f9fafb',
       width: '100%',
       boxSizing: 'border-box',
+      fontFamily: 'system-ui, sans-serif',
     },
 
     button: {
@@ -272,7 +275,9 @@ function CreateWorkspace() {
               type="text"
               placeholder="Enter workspace name"
               value={workspaceName}
-              onChange={(e) => setWorkspaceName(e.target.value)}
+              onChange={(e) =>
+                setWorkspaceName(e.target.value)
+              }
               style={styles.input}
               onFocus={handleFocus}
               onBlur={handleBlur}
@@ -293,7 +298,9 @@ function CreateWorkspace() {
               type="text"
               placeholder="What's this workspace for?"
               value={description}
-              onChange={(e) => setDescription(e.target.value)}
+              onChange={(e) =>
+                setDescription(e.target.value)
+              }
               style={styles.input}
               onFocus={handleFocus}
               onBlur={handleBlur}

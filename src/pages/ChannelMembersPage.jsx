@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 function BackIcon() {
@@ -51,17 +51,13 @@ function ChannelMembersPage() {
   // Real members will be connected here later from the backend.
   const members = [];
 
-  const filteredMembers = useMemo(() => {
-    const value = search.toLowerCase().trim();
+  const value = search.toLowerCase().trim();
 
-    if (!value) {
-      return members;
-    }
-
-    return members.filter((member) =>
-      member.name.toLowerCase().includes(value)
-    );
-  }, [search]);
+  const filteredMembers = value
+    ? members.filter((member) =>
+        member.name.toLowerCase().includes(value)
+      )
+    : members;
 
   return (
     <main className="channel-members-page">
@@ -112,6 +108,7 @@ function ChannelMembersPage() {
 
               <div className="member-info">
                 <strong>{member.name}</strong>
+
                 <span>
                   {member.status === "online"
                     ? "Online"
