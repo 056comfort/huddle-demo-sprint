@@ -40,7 +40,7 @@ describe("Authentication API", () => {
 
     expect(response.status).toBe(409);
     expect(response.body).toEqual({
-      message: "User already exists",
+      message: "An account with this email already exists",
     });
   });
 

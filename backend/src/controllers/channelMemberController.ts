@@ -3,6 +3,8 @@ import prisma from "../config/prisma";
 import { AuthRequest } from "../middleware/authMiddleware";
 
 // JOIN CHANNEL
+// Public channels can be joined directly.
+// Private channels can only be joined by being added by an existing member.
 export const joinChannel = async (
   req: AuthRequest,
   res: Response
@@ -26,6 +28,13 @@ export const joinChannel = async (
     if (!channel) {
       return res.status(404).json({
         message: "Channel not found",
+      });
+    }
+
+    if (channel.isPrivate) {
+      return res.status(403).json({
+        message:
+          "This is a private channel. You must be added by an existing member.",
       });
     }
 
@@ -63,6 +72,7 @@ export const joinChannel = async (
             id: true,
             name: true,
             description: true,
+            isPrivate: true,
           },
         },
       },
@@ -160,6 +170,22 @@ export const getChannelMembers = async (
       });
     }
 
+    const currentMembership =
+      await prisma.channelMember.findUnique({
+        where: {
+          channelId_userId: {
+            channelId,
+            userId: currentUserId,
+          },
+        },
+      });
+
+    if (!currentMembership) {
+      return res.status(403).json({
+        message: "You must be a member of the channel",
+      });
+    }
+
     const members = await prisma.channelMember.findMany({
       where: {
         channelId,
@@ -187,6 +213,115 @@ export const getChannelMembers = async (
 
     return res.status(500).json({
       message: "Failed to get channel members",
+    });
+  }
+};
+
+// ADD CHANNEL MEMBER
+// Any existing channel member can add another user.
+export const addChannelMember = async (
+  req: AuthRequest,
+  res: Response
+) => {
+  try {
+    const currentUserId = req.user?.userId;
+    const channelId = req.params.channelId as string;
+    const { userId } = req.body;
+
+    if (!currentUserId) {
+      return res.status(401).json({
+        message: "Authentication required",
+      });
+    }
+
+    if (!userId || typeof userId !== "string") {
+      return res.status(400).json({
+        message: "userId is required to add a member",
+      });
+    }
+
+    const channel = await prisma.channel.findUnique({
+      where: {
+        id: channelId,
+      },
+    });
+
+    if (!channel) {
+      return res.status(404).json({
+        message: "Channel not found",
+      });
+    }
+
+    const currentUserMembership =
+      await prisma.channelMember.findUnique({
+        where: {
+          channelId_userId: {
+            channelId,
+            userId: currentUserId,
+          },
+        },
+      });
+
+    if (!currentUserMembership) {
+      return res.status(403).json({
+        message:
+          "You must be a member of the channel to add others",
+      });
+    }
+
+    const targetUser = await prisma.user.findUnique({
+      where: {
+        id: userId,
+      },
+    });
+
+    if (!targetUser) {
+      return res.status(404).json({
+        message: "User not found",
+      });
+    }
+
+    const existingMembership =
+      await prisma.channelMember.findUnique({
+        where: {
+          channelId_userId: {
+            channelId,
+            userId,
+          },
+        },
+      });
+
+    if (existingMembership) {
+      return res.status(409).json({
+        message: "User is already a member of this channel",
+      });
+    }
+
+    const membership = await prisma.channelMember.create({
+      data: {
+        channelId,
+        userId,
+      },
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+      },
+    });
+
+    return res.status(201).json({
+      message: "Member added successfully",
+      membership,
+    });
+  } catch (error) {
+    console.error("Add channel member error:", error);
+
+    return res.status(500).json({
+      message: "Failed to add channel member",
     });
   }
 };

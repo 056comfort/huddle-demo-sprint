@@ -27,9 +27,9 @@ import {
 } from "./controllers/userController";
 
 import {
-  getChannelNotifications,
-  updateChannelNotificationSettings,
-} from "./controllers/notificationController";
+  getChannelNotificationSetting,
+  updateChannelNotificationSetting,
+} from "./controllers/channelSettingsController";
 
 import { protect } from "./middleware/authMiddleware";
 
@@ -92,13 +92,13 @@ app.use("/api/notifications", notificationRoutes);
 app.get(
   "/api/channels/:channelId/notifications",
   protect,
-  getChannelNotifications
+  getChannelNotificationSetting
 );
 
 app.patch(
   "/api/channels/:channelId/notifications",
   protect,
-  updateChannelNotificationSettings
+  updateChannelNotificationSetting
 );
 
 // APP SETTINGS

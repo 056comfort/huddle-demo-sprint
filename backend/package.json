@@ -7,7 +7,8 @@
     "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
     "build": "tsc",
     "start": "node dist/server.js",
-    "test": "jest --runInBand"
+    "test": "jest --runInBand",
+    "postinstall": "prisma generate"
   },
   "keywords": [],
   "author": "",
@@ -20,9 +21,11 @@
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
+    "google-auth-library": "^11.0.2",
     "jsonwebtoken": "^9.0.3",
     "pg": "^8.23.0",
     "prisma": "^7.10.0",
+    "resend": "^6.28.0",
     "socket.io": "^4.8.3"
   },
   "devDependencies": {
@@ -39,11 +42,5 @@
     "ts-jest": "^29.4.12",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.9.2"
-  },
-  "allowScripts": {
-    "@prisma/engines@7.10.0": true,
-    "prisma@7.10.0": true,
-    "@parcel/watcher@2.6.0": true,
-    "unrs-resolver@1.12.2": true
   }
 }

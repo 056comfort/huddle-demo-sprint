@@ -4,7 +4,7 @@ import { AuthRequest } from "../middleware/authMiddleware";
 import {
   SupportTicketPriority,
   SupportTicketStatus,
-} from "../generated/enums";
+} from "../generated/client";
 
 // CREATE SUPPORT TICKET
 export const createSupportTicket = async (

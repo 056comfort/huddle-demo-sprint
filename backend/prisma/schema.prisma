@@ -1,42 +1,44 @@
 generator client {
-  provider = "prisma-client-js"
-  output   = "../src/generated"
+  provider   = "prisma-client-js"
+  output     = "../src/generated"
+  engineType = "library"
 }
 
 datasource db {
   provider = "postgresql"
 }
 
-enum SupportTicketStatus {
-  OPEN
-  IN_PROGRESS
-  RESOLVED
-  CLOSED
-}
-
-enum SupportTicketPriority {
-  LOW
-  MEDIUM
-  HIGH
-  URGENT
-}
-
 model User {
-  id        String   @id @default(uuid())
-  name      String
-  email     String   @unique
-  password  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id                       String    @id @default(uuid())
+  name                     String
+  email                    String    @unique
+  password                 String
+  googleId                 String?   @unique
+  emailVerified            Boolean   @default(false)
+  emailVerificationToken   String?   @unique
+  emailVerificationExpires DateTime?
+  createdAt                DateTime  @default(now())
+  updatedAt                DateTime  @updatedAt
 
-  conversations               ConversationMember[]
-  messages                    Message[]
+  // Channels
   channels                    ChannelMember[]
   channelMessages             ChannelMessage[]
-  notifications               Notification[]
   channelNotificationSettings ChannelNotificationSetting[]
-  workspaces                  Workspace[]
-  supportTickets              SupportTicket[]
+
+  // Direct messages
+  conversations ConversationMember[]
+  messages      Message[]
+
+  // Notifications
+  notifications Notification[]
+
+  // Support
+  supportTickets SupportTicket[]
+
+  // Workspaces
+  workspaces           Workspace[]
+  workspaceMemberships WorkspaceMember[]
+  sentWorkspaceInvites WorkspaceInvite[]
 
   @@map("users")
 }
@@ -48,10 +50,47 @@ model Workspace {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  owner User @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  owner   User              @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  members WorkspaceMember[]
+  invites WorkspaceInvite[]
 
   @@index([ownerId])
   @@map("workspaces")
+}
+
+model WorkspaceMember {
+  id          String   @id @default(uuid())
+  workspaceId String
+  userId      String
+  joinedAt    DateTime @default(now())
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([workspaceId, userId])
+  @@index([workspaceId])
+  @@index([userId])
+  @@map("workspace_members")
+}
+
+model WorkspaceInvite {
+  id          String    @id @default(uuid())
+  workspaceId String
+  inviterId   String
+  email       String
+  token       String    @unique
+  expiresAt   DateTime
+  createdAt   DateTime  @default(now())
+  acceptedAt  DateTime?
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  inviter   User      @relation(fields: [inviterId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId])
+  @@index([inviterId])
+  @@index([email])
+  @@index([expiresAt])
+  @@map("workspace_invites")
 }
 
 model SupportTicket {
@@ -86,17 +125,18 @@ model Conversation {
 }
 
 model ConversationMember {
-  id             String   @id @default(uuid())
+  id             String    @id @default(uuid())
   conversationId String
   userId         String
+  joinedAt       DateTime  @default(now())
+  lastReadAt     DateTime?
 
   conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
   user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  joinedAt   DateTime  @default(now())
-  lastReadAt DateTime?
-
   @@unique([conversationId, userId])
+  @@index([conversationId])
+  @@index([userId])
   @@map("conversation_members")
 }
 
@@ -105,12 +145,10 @@ model Message {
   content        String
   conversationId String
   senderId       String
-
-  isEdited  Boolean @default(false)
-  isDeleted Boolean @default(false)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  isDeleted      Boolean  @default(false)
+  isEdited       Boolean  @default(false)
 
   conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
   sender       User         @relation(fields: [senderId], references: [id], onDelete: Cascade)
@@ -124,13 +162,14 @@ model Channel {
   id          String   @id @default(uuid())
   name        String   @unique
   description String?
+  isPrivate   Boolean  @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-
+  
   members              ChannelMember[]
   messages             ChannelMessage[]
-  notifications        Notification[]
   notificationSettings ChannelNotificationSetting[]
+  notifications        Notification[]
 
   @@map("channels")
 }
@@ -145,6 +184,8 @@ model ChannelMember {
   user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([channelId, userId])
+  @@index([channelId])
+  @@index([userId])
   @@map("channel_members")
 }
 
@@ -153,10 +194,8 @@ model ChannelMessage {
   content   String
   channelId String
   senderId  String
-
-  isEdited  Boolean @default(false)
-  isDeleted Boolean @default(false)
-
+  isEdited  Boolean  @default(false)
+  isDeleted Boolean  @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -178,8 +217,8 @@ model Notification {
   isRead    Boolean  @default(false)
   createdAt DateTime @default(now())
 
-  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   channel Channel? @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([channelId])
@@ -199,5 +238,21 @@ model ChannelNotificationSetting {
   user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([channelId, userId])
+  @@index([channelId])
+  @@index([userId])
   @@map("channel_notification_settings")
+}
+
+enum SupportTicketStatus {
+  OPEN
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+}
+
+enum SupportTicketPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
 }
