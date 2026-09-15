@@ -197,6 +197,22 @@ export const editChannelMessage = async (
       });
     }
 
+    // User must still belong to the channel.
+    const membership = await prisma.channelMember.findUnique({
+      where: {
+        channelId_userId: {
+          channelId: message.channelId,
+          userId: currentUserId,
+        },
+      },
+    });
+
+    if (!membership) {
+      return res.status(403).json({
+        message: "You are not a member of this channel",
+      });
+    }
+
     if (message.senderId !== currentUserId) {
       return res.status(403).json({
         message: "You can only edit your own messages",
@@ -265,6 +281,22 @@ export const deleteChannelMessage = async (
     if (!message) {
       return res.status(404).json({
         message: "Channel message not found",
+      });
+    }
+
+    // User must still belong to the channel.
+    const membership = await prisma.channelMember.findUnique({
+      where: {
+        channelId_userId: {
+          channelId: message.channelId,
+          userId: currentUserId,
+        },
+      },
+    });
+
+    if (!membership) {
+      return res.status(403).json({
+        message: "You are not a member of this channel",
       });
     }
 

@@ -28,6 +28,16 @@ export const register = async (
 
     const normalizedEmail = email.trim().toLowerCase();
 
+    // Validate email format
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!emailPattern.test(normalizedEmail)) {
+      return res.status(400).json({
+        message: "Invalid email address",
+      });
+    }
+
+    // Validate password length
     if (password.length < 6) {
       return res.status(400).json({
         message: "Password must be at least 6 characters",
@@ -35,7 +45,9 @@ export const register = async (
     }
 
     const existingUser = await prisma.user.findUnique({
-      where: { email: normalizedEmail },
+      where: {
+        email: normalizedEmail,
+      },
     });
 
     if (existingUser) {
@@ -97,7 +109,9 @@ export const register = async (
 
           <p>This verification link expires in 24 hours.</p>
 
-          <p>If you did not create this account, you can ignore this email.</p>
+          <p>
+            If you did not create this account, you can ignore this email.
+          </p>
         `,
       });
     } catch (emailError) {
@@ -105,11 +119,14 @@ export const register = async (
 
       // Remove the user if the verification email could not be sent.
       await prisma.user.delete({
-        where: { id: user.id },
+        where: {
+          id: user.id,
+        },
       });
 
       return res.status(500).json({
-        message: "Account could not be created because the verification email failed to send",
+        message:
+          "Account could not be created because the verification email failed to send",
       });
     }
 
@@ -162,7 +179,9 @@ export const verifyEmail = async (
     }
 
     await prisma.user.update({
-      where: { id: user.id },
+      where: {
+        id: user.id,
+      },
       data: {
         emailVerified: true,
         emailVerificationToken: null,
@@ -270,7 +289,10 @@ export const login = async (
       });
     } catch (emailError) {
       // Don't prevent a valid login if the confirmation email fails.
-      console.error("Login confirmation email error:", emailError);
+      console.error(
+        "Login confirmation email error:",
+        emailError
+      );
     }
 
     return res.json({
@@ -308,7 +330,9 @@ export const forgotPassword = async (
     const normalizedEmail = email.trim().toLowerCase();
 
     const user = await prisma.user.findUnique({
-      where: { email: normalizedEmail },
+      where: {
+        email: normalizedEmail,
+      },
     });
 
     // Always respond 200 to prevent user enumeration.
@@ -332,7 +356,9 @@ export const forgotPassword = async (
     const tokenSecret = `${secret}${user.password}`;
 
     const token = jwt.sign(
-      { userId: user.id },
+      {
+        userId: user.id,
+      },
       tokenSecret,
       {
         expiresIn: RESET_TOKEN_EXPIRY,
@@ -378,12 +404,16 @@ export const forgotPassword = async (
           <p>This link expires in 1 hour.</p>
 
           <p>
-            If you did not request a password reset, you can safely ignore this email.
+            If you did not request a password reset,
+            you can safely ignore this email.
           </p>
         `,
       });
     } catch (emailError) {
-      console.error("Password reset email error:", emailError);
+      console.error(
+        "Password reset email error:",
+        emailError
+      );
     }
 
     return res.json({
@@ -428,7 +458,9 @@ export const resetPassword = async (
     }
 
     const user = await prisma.user.findUnique({
-      where: { id: uid },
+      where: {
+        id: uid,
+      },
     });
 
     if (!user) {
@@ -447,10 +479,15 @@ export const resetPassword = async (
       });
     }
 
-    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    const hashedPassword = await bcrypt.hash(
+      newPassword,
+      10
+    );
 
     await prisma.user.update({
-      where: { id: uid },
+      where: {
+        id: uid,
+      },
       data: {
         password: hashedPassword,
       },
