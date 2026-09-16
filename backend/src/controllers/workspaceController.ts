@@ -589,3 +589,135 @@ export const removeWorkspaceMember = async (
     });
   }
 };
+
+// GET WORKSPACES AVAILABLE TO JOIN
+export const getAvailableWorkspaces = async (
+  req: AuthRequest,
+  res: Response
+) => {
+  try {
+    const userId = req.user?.userId;
+
+    if (!userId) {
+      return res.status(401).json({
+        message: "Authentication required",
+      });
+    }
+
+    const workspaces = await prisma.workspace.findMany({
+      where: {
+        members: {
+          none: {
+            userId,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: "asc",
+      },
+      select: {
+        id: true,
+        name: true,
+        createdAt: true,
+        owner: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+        _count: {
+          select: {
+            members: true,
+          },
+        },
+      },
+    });
+
+    return res.status(200).json({
+      workspaces,
+    });
+  } catch (error) {
+    console.error("Get available workspaces error:", error);
+
+    return res.status(500).json({
+      message: "Failed to get available workspaces",
+    });
+  }
+};
+
+// JOIN WORKSPACE
+export const joinWorkspace = async (
+  req: AuthRequest,
+  res: Response
+) => {
+  try {
+    const userId = req.user?.userId;
+    const workspaceId = req.params.id as string;
+
+    if (!userId) {
+      return res.status(401).json({
+        message: "Authentication required",
+      });
+    }
+
+    const workspace = await prisma.workspace.findUnique({
+      where: {
+        id: workspaceId,
+      },
+      select: {
+        id: true,
+        name: true,
+        ownerId: true,
+      },
+    });
+
+    if (!workspace) {
+      return res.status(404).json({
+        message: "Workspace not found",
+      });
+    }
+
+    const existingMembership =
+      await prisma.workspaceMember.findUnique({
+        where: {
+          workspaceId_userId: {
+            workspaceId,
+            userId,
+          },
+        },
+      });
+
+    if (existingMembership) {
+      return res.status(409).json({
+        message: "You are already a member of this workspace",
+      });
+    }
+
+    const membership = await prisma.workspaceMember.create({
+      data: {
+        workspaceId,
+        userId,
+      },
+      include: {
+        workspace: {
+          select: {
+            id: true,
+            name: true,
+            ownerId: true,
+          },
+        },
+      },
+    });
+
+    return res.status(201).json({
+      message: "Workspace joined successfully",
+      membership,
+    });
+  } catch (error) {
+    console.error("Join workspace error:", error);
+
+    return res.status(500).json({
+      message: "Failed to join workspace",
+    });
+  }
+};
