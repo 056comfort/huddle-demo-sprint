@@ -1,11 +1,14 @@
-import { useState } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth.js";
+import { endpoints, apiFetch } from "../api/apiConfig.js";
 
 import ChannelList from "../components/channels/ChannelList.jsx";
-import MessageList from "../components/messaging/MessageList.jsx";
 import MessageInput from "../components/messaging/MessageInput.jsx";
 
 import "../App.css";
+
+/* ─── Icons ──────────────────────────────────────────────────── */
 
 function VideoCallIcon() {
   return (
@@ -149,8 +152,8 @@ function MenuIcon() {
       <path
         d="M4 18H20"
         stroke="currentColor"
-        strokeLinecap="round"
         strokeWidth="2"
+        strokeLinecap="round"
       />
     </svg>
   );
@@ -194,6 +197,24 @@ function ChannelHashIcon() {
   );
 }
 
+function RefreshIcon() {
+  return (
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      aria-hidden="true"
+    >
+      <polyline points="23 4 23 10 17 10" />
+      <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
+    </svg>
+  );
+}
+
 function UserAvatar({ letter = "Y" }) {
   return (
     <div className="user-avatar" aria-hidden="true">
@@ -202,63 +223,426 @@ function UserAvatar({ letter = "Y" }) {
   );
 }
 
+/* ─── UUID detection ─────────────────────────────────────────── */
+
+const UUID_RE =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+const isUUID = (value) => UUID_RE.test(value || "");
+
+/* ─── Main Component ─────────────────────────────────────────── */
+
 function ChannelMessagingPage() {
-  const { channelId } = useParams();
+  const { channelId: channelParam } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
+
+  const currentUserName = user?.name || "You";
+  const currentUserAvatar = currentUserName
+    .charAt(0)
+    .toUpperCase();
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  const channelName = decodeURIComponent(channelId || "general");
-
-  // New channels start completely empty.
+  const [channel, setChannel] = useState(null);
   const [messages, setMessages] = useState([]);
 
-  function handleSendMessage(message) {
-    if (!message?.trim()) {
+  const [loadingCh, setLoadingCh] = useState(true);
+  const [loadingMsg, setLoadingMsg] = useState(true);
+  const [error, setError] = useState("");
+  const [refreshing, setRefreshing] = useState(false);
+
+  const messagesEndRef = useRef(null);
+
+  /* ── Resolve channel ── */
+
+  const resolveChannel = useCallback(async () => {
+    if (!channelParam) {
+      throw new Error("Channel ID is missing.");
+    }
+
+    setLoadingCh(true);
+
+    try {
+      let res;
+
+      if (isUUID(channelParam)) {
+        res = await apiFetch(
+          endpoints.channelById(channelParam)
+        );
+      } else {
+        res = await apiFetch(
+          endpoints.channelByName(channelParam)
+        );
+      }
+
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok) {
+        throw new Error(
+          data.message ||
+            "Channel not found or you don't have access."
+        );
+      }
+
+      const found = data.channel || data;
+
+      if (!found?.id) {
+        throw new Error(
+          "Channel information was not returned by the server."
+        );
+      }
+
+      setChannel(found);
+
+      /*
+       * If the user entered a channel name instead of
+       * a UUID, replace the URL with the canonical UUID.
+       * The UUID is used internally; the channel name is
+       * always displayed from found.name.
+       */
+      if (!isUUID(channelParam)) {
+        navigate(`/channel/${found.id}`, {
+          replace: true,
+        });
+      }
+
+      return found.id;
+    } finally {
+      setLoadingCh(false);
+    }
+  }, [channelParam, navigate]);
+
+  /* ── Load messages ── */
+
+  const loadMessages = useCallback(async (channelId) => {
+    if (!channelId) {
+      throw new Error("Channel ID is missing.");
+    }
+
+    const res = await apiFetch(
+      endpoints.channelMessages(channelId)
+    );
+
+    const data = await res.json().catch(() => ({}));
+
+    if (!res.ok) {
+      throw new Error(
+        data.message ||
+          `Failed to load channel messages (${res.status}).`
+      );
+    }
+
+    if (!Array.isArray(data.messages)) {
+      throw new Error(
+        "Invalid messages response from the server."
+      );
+    }
+
+    setMessages(data.messages);
+
+    return data.messages;
+  }, []);
+
+  /* ── Initial load ── */
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const bootstrap = async () => {
+      setLoadingCh(true);
+      setLoadingMsg(true);
+      setError("");
+
+      try {
+        const channelId = await resolveChannel();
+
+        if (cancelled || !channelId) {
+          return;
+        }
+
+        await loadMessages(channelId);
+
+        if (!cancelled) {
+          setError("");
+        }
+      } catch (error) {
+        if (!cancelled) {
+          console.error(
+            "Channel loading error:",
+            error
+          );
+
+          setError(
+            error.message ||
+              "Could not load the channel."
+          );
+        }
+      } finally {
+        if (!cancelled) {
+          setLoadingCh(false);
+          setLoadingMsg(false);
+        }
+      }
+    };
+
+    bootstrap();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [resolveChannel, loadMessages]);
+
+  /* ── Auto-refresh ── */
+
+  useEffect(() => {
+    if (!channel?.id || loadingCh) {
       return;
     }
 
-    const newMessage = {
-      id: Date.now(),
-      sender: "You",
-      avatar: "Y",
-      message: message.trim(),
-      time: new Date().toLocaleTimeString([], {
-        hour: "numeric",
-        minute: "2-digit",
-      }),
-      isCurrentUser: true,
+    const interval = setInterval(async () => {
+      try {
+        await loadMessages(channel.id);
+        setError("");
+      } catch (error) {
+        console.error(
+          "Auto-refresh channel messages error:",
+          error
+        );
+
+        /*
+         * Keep currently displayed messages.
+         */
+        setError(
+          error.message ||
+            "Unable to refresh channel messages."
+        );
+      }
+    }, 10000);
+
+    return () => clearInterval(interval);
+  }, [channel?.id, loadingCh, loadMessages]);
+
+  /* ── Scroll to latest ── */
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({
+      behavior: "smooth",
+    });
+  }, [messages]);
+
+  /* ── Manual refresh ── */
+
+  const handleRefresh = async () => {
+    if (!channel?.id || refreshing) {
+      return;
+    }
+
+    setRefreshing(true);
+
+    try {
+      await loadMessages(channel.id);
+      setError("");
+    } catch (error) {
+      console.error(
+        "Manual channel refresh error:",
+        error
+      );
+
+      setError(
+        error.message ||
+          "Failed to refresh channel messages."
+      );
+    } finally {
+      setRefreshing(false);
+    }
+  };
+
+  /* ── Send message ── */
+
+  const handleSendMessage = async (messageText) => {
+    const text = messageText?.trim();
+
+    if (!text || !channel?.id) {
+      return;
+    }
+
+    const optimisticId =
+      `opt-${Date.now()}-${Math.random()
+        .toString(36)
+        .slice(2)}`;
+
+    const optimistic = {
+      id: optimisticId,
+      content: text,
+      senderId: user?.id,
+      sender: {
+        id: user?.id,
+        name: currentUserName,
+        email: user?.email,
+      },
+      createdAt: new Date().toISOString(),
+      isOptimistic: true,
     };
 
-    setMessages((currentMessages) => [
-      ...currentMessages,
-      newMessage,
+    /*
+     * Display immediately.
+     */
+    setMessages((prev) => [
+      ...prev,
+      optimistic,
     ]);
 
-    console.log("Message ready for backend:", {
-      channelId,
-      message: message.trim(),
-    });
-  }
+    setError("");
 
-  function closeSidebar() {
-    setIsSidebarOpen(false);
+    try {
+      const res = await apiFetch(
+        endpoints.channelMessages(channel.id),
+        {
+          method: "POST",
+          body: JSON.stringify({
+            content: text,
+          }),
+        }
+      );
+
+      const data = await res.json().catch(() => ({}));
+
+      /*
+       * IMPORTANT:
+       * fetch() does NOT throw for HTTP 400/401/403/500.
+       * We must explicitly check res.ok.
+       */
+      if (!res.ok) {
+        throw new Error(
+          data.message ||
+            `Failed to send message (${res.status}).`
+        );
+      }
+
+      /*
+       * Backend returns:
+       *
+       * {
+       *   message: "Message sent successfully",
+       *   channelMessage: {...}
+       * }
+       */
+      if (data?.channelMessage) {
+        setMessages((prev) =>
+          prev.map((item) =>
+            item.id === optimisticId
+              ? data.channelMessage
+              : item
+          )
+        );
+      } else {
+        /*
+         * Fallback if the backend doesn't return
+         * the created message.
+         */
+        await loadMessages(channel.id);
+      }
+    } catch (error) {
+      console.error(
+        "Send channel message error:",
+        error
+      );
+
+      /*
+       * Remove only the failed optimistic message.
+       */
+      setMessages((prev) =>
+        prev.filter(
+          (item) => item.id !== optimisticId
+        )
+      );
+
+      setError(
+        error.message ||
+          "Failed to send channel message."
+      );
+    }
+  };
+
+  const channelName =
+    channel?.name ||
+    (!isUUID(channelParam)
+      ? decodeURIComponent(channelParam || "")
+      : "Loading…");
+
+  if (error && !channel) {
+    return (
+      <div className="app-shell">
+        <aside className="app-sidebar">
+          <div className="workspace-header">
+            <div className="workspace-icon">H</div>
+
+            <div className="workspace-details">
+              <h1>Huddle</h1>
+            </div>
+          </div>
+
+          <ChannelList />
+        </aside>
+
+        <main
+          className="chat-main"
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <div
+            style={{
+              textAlign: "center",
+              padding: "40px",
+            }}
+          >
+            <p
+              style={{
+                color: "#ef4444",
+                marginBottom: "16px",
+              }}
+            >
+              {error}
+            </p>
+
+            <button
+              className="primary-button"
+              onClick={() =>
+                navigate("/join-channel")
+              }
+            >
+              Browse channels
+            </button>
+          </div>
+        </main>
+      </div>
+    );
   }
 
   return (
     <div className="app-shell">
+      {/* Mobile backdrop */}
       {isSidebarOpen && (
         <button
           type="button"
           className="sidebar-backdrop"
           aria-label="Close navigation"
-          onClick={closeSidebar}
+          onClick={() =>
+            setIsSidebarOpen(false)
+          }
         />
       )}
 
+      {/* Sidebar */}
       <aside
         className={`app-sidebar ${
-          isSidebarOpen ? "sidebar-open" : ""
+          isSidebarOpen
+            ? "sidebar-open"
+            : ""
         }`}
       >
         <div className="workspace-header">
@@ -272,30 +656,45 @@ function ChannelMessagingPage() {
           </div>
         </div>
 
-        <ChannelList activeChannel={channelName} />
+        <ChannelList
+          activeChannelId={channel?.id}
+        />
 
-        <Link to="/profile" className="profile">
-          <UserAvatar letter="Y" />
+        <Link
+          to="/profile"
+          className="profile"
+        >
+          <UserAvatar
+            letter={currentUserAvatar}
+          />
 
           <div className="profile-info">
-            <strong>Your Name</strong>
+            <strong>
+              {currentUserName}
+            </strong>
+
             <span>Online</span>
           </div>
 
-          <span className="profile-menu" aria-hidden="true">
+          <span
+            className="profile-menu"
+            aria-hidden="true"
+          >
             ⋯
           </span>
         </Link>
       </aside>
 
+      {/* Main chat */}
       <main className="chat-main">
         <header className="chat-header">
           <button
             type="button"
             className="mobile-menu-button"
             aria-label="Open navigation"
-            title="Open navigation"
-            onClick={() => setIsSidebarOpen(true)}
+            onClick={() =>
+              setIsSidebarOpen(true)
+            }
           >
             <MenuIcon />
           </button>
@@ -304,7 +703,10 @@ function ChannelMessagingPage() {
             type="button"
             className="chat-channel-title"
             onClick={() =>
-              navigate(`/channel/${channelId}/info`)
+              channel &&
+              navigate(
+                `/channel/${channel.id}/info`
+              )
             }
             title="Open channel info"
           >
@@ -313,10 +715,22 @@ function ChannelMessagingPage() {
             </span>
 
             <span className="chat-channel-title-content">
-              <strong>{channelName}</strong>
+              <strong>
+                {loadingCh
+                  ? "Loading…"
+                  : channelName}
+              </strong>
 
               <span>
-                Team conversation for the {channelName} channel
+                {channel
+                  ? `${
+                      channel._count
+                        ?.members ??
+                      channel.members
+                        ?.length ??
+                      0
+                    } members`
+                  : "Team conversation"}
               </span>
             </span>
           </button>
@@ -324,13 +738,30 @@ function ChannelMessagingPage() {
           <div className="chat-header-actions">
             <button
               type="button"
+              aria-label="Refresh messages"
+              title="Refresh"
+              onClick={handleRefresh}
+              disabled={refreshing}
+              style={{
+                opacity: refreshing
+                  ? 0.5
+                  : 1,
+              }}
+            >
+              <RefreshIcon />
+            </button>
+
+            <button
+              type="button"
               aria-label="Start video call"
               title="Video call"
               onClick={() =>
+                channel &&
                 navigate(
-                  `/call/video/channel/${channelId}`
+                  `/call/video/channel/${channel.id}`
                 )
               }
+              disabled={!channel}
             >
               <VideoCallIcon />
             </button>
@@ -340,10 +771,12 @@ function ChannelMessagingPage() {
               aria-label="Start audio call"
               title="Audio call"
               onClick={() =>
+                channel &&
                 navigate(
-                  `/call/audio/channel/${channelId}`
+                  `/call/audio/channel/${channel.id}`
                 )
               }
+              disabled={!channel}
             >
               <CallIcon />
             </button>
@@ -353,10 +786,12 @@ function ChannelMessagingPage() {
               aria-label="Notifications"
               title="Notifications"
               onClick={() =>
+                channel &&
                 navigate(
-                  `/channel/${channelId}/notifications`
+                  `/channel/${channel.id}/notifications`
                 )
               }
+              disabled={!channel}
             >
               <BellIcon />
             </button>
@@ -366,10 +801,12 @@ function ChannelMessagingPage() {
               aria-label="View members"
               title="Members"
               onClick={() =>
+                channel &&
                 navigate(
-                  `/channel/${channelId}/members`
+                  `/channel/${channel.id}/members`
                 )
               }
+              disabled={!channel}
             >
               <MembersIcon />
             </button>
@@ -377,18 +814,151 @@ function ChannelMessagingPage() {
         </header>
 
         <section className="chat-content">
-          <MessageList messages={messages} />
+          {loadingCh || loadingMsg ? (
+            <div
+              className="message-list-empty"
+              style={{
+                paddingTop: 40,
+              }}
+            >
+              <p>
+                Loading messages…
+              </p>
+            </div>
+          ) : (
+            <>
+              {error && (
+                <div
+                  role="alert"
+                  style={{
+                    padding:
+                      "8px 16px",
+                    color:
+                      "#ef4444",
+                    fontSize:
+                      "13px",
+                    textAlign:
+                      "center",
+                  }}
+                >
+                  {error}
+                </div>
+              )}
+
+              {messages.length === 0 && !error && (
+                <div className="message-list-empty">
+                  <p>
+                    No messages yet.
+                    Be the first to
+                    say something! 👋
+                  </p>
+                </div>
+              )}
+
+              <div className="message-list">
+                {messages.map((msg) => {
+                  const senderName =
+                    msg.sender?.name ||
+                    "Unknown";
+
+                  const avatar =
+                    senderName
+                      .charAt(0)
+                      .toUpperCase();
+
+                  const isMe =
+                    msg.senderId ===
+                      user?.id ||
+                    msg.sender?.id ===
+                      user?.id ||
+                    msg.isOptimistic;
+
+                  const timeStr =
+                    msg.createdAt
+                      ? new Date(
+                          msg.createdAt
+                        ).toLocaleTimeString(
+                          [],
+                          {
+                            hour: "numeric",
+                            minute:
+                              "2-digit",
+                          }
+                        )
+                      : "";
+
+                  return (
+                    <div
+                      key={msg.id}
+                      className={`message-item ${
+                        isMe
+                          ? "message-own"
+                          : ""
+                      }`}
+                      style={{
+                        opacity:
+                          msg.isOptimistic
+                            ? 0.6
+                            : 1,
+                      }}
+                    >
+                      <div className="message-avatar">
+                        {avatar}
+                      </div>
+
+                      <div className="message-body">
+                        <div className="message-meta">
+                          <strong>
+                            {isMe
+                              ? "You"
+                              : senderName}
+                          </strong>
+
+                          <time>
+                            {timeStr}
+                          </time>
+                        </div>
+
+                        <div className="message-bubble">
+                          {msg.content}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+
+                <div
+                  ref={messagesEndRef}
+                />
+              </div>
+            </>
+          )}
         </section>
 
         <div className="chat-composer">
           <MessageInput
-            onSendMessage={handleSendMessage}
+            onSend={handleSendMessage}
+            disabled={
+              loadingCh ||
+              !channel
+            }
           />
         </div>
 
         <div className="chat-footer-note">
-          Messages sent in this channel are visible to
-          channel members.
+          Messages sent in this
+          channel are visible to
+          all members.
+
+          <span
+            style={{
+              marginLeft: 8,
+              color: "#9ca3af",
+              fontSize: 12,
+            }}
+          >
+            Auto-refreshes every 10 s
+          </span>
         </div>
       </main>
     </div>
