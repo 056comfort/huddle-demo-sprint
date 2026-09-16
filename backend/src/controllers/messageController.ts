@@ -273,6 +273,15 @@ export const deleteMessage = async (
         content: "This message was deleted",
       },
     });
+         
+    await prisma.conversation.update({
+      where: {
+        id: message.conversationId,
+      },
+      data: {
+        updatedAt: new Date(),
+      },
+    });
 
     return res.json({
       message: "Message deleted successfully",
